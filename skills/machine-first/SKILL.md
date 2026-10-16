@@ -1,6 +1,6 @@
 ---
 name: machine-first
-description: Do the work on the machine instead of in the context, and turn any repeatable action into an idempotent script. Use before reading a large file, counting or comparing across many files, or when an action may be needed a second time.
+description: Do the work on the machine rather than in the context, and turn repeatable actions into idempotent scripts. Use before reading a large file, before counting or comparing across many files, or when an action may be needed twice.
 ---
 
 # Machine first

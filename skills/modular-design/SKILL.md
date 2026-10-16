@@ -1,6 +1,6 @@
 ---
 name: modular-design
-description: Decide where a boundary goes and check it holds — deletability, one reason to change, testability in isolation, dependency direction. Use when adding a module, when a file grows, when two things keep changing together, or when a one-line change touches several files.
+description: Decide where a boundary goes and check it holds: deletability, one reason to change, isolated testability, dependency direction. Use when adding a module, when a file grows, or when a one-line change touches several files.
 ---
 
 # Modular design

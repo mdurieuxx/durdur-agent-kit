@@ -1,6 +1,6 @@
 ---
 name: kit-contribution
-description: Port material into the shared kit, generalised, or decide it stays in its project. Use when porting a rule, skill, agent or hook, after a mistake cost real time, at a milestone or close, or when asked what we learned.
+description: Port material into the shared kit, generalised, or decide it stays in its project. Use when porting a rule, skill, agent or hook, after a mistake cost real time, at a milestone, or when asked what we learned.
 ---
 
 # Into the kit, or staying put
