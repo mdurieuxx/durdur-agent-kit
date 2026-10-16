@@ -28,6 +28,32 @@ So **always-on rules cannot come from here.** They belong in each project's own
 `AGENTS.md`, which already loads on every turn. This kit carries what is needed
 **on demand** — and that split is also what makes it cheap.
 
+## Two kinds of hook, do not confuse them
+
+| | Mechanism | Declared in | Cost |
+| --- | --- | --- | --- |
+| **agent hooks** | run on tool use | `hooks/hooks.json` | 0 context tokens |
+| **git hooks** | run on commit | `scripts/install-git-hooks.sh` | 0, they never touch the context |
+
+`guard-destructive` and `token-report` are agent hooks. The five commit hooks —
+`enforce-feature-branch`, `english-only`, `no-assistant-in-code`,
+`no-assistant-attribution`, `tdd-test-parity` — are **git** hooks: they read the
+staged diff and `$1`, the commit-message file. Wiring one into `hooks.json`
+means wiring it where it will never run.
+
+```sh
+sh scripts/install-git-hooks.sh     # idempotent; refuses to clobber a foreign hook
+```
+
+Escape hatch for a release cut, which commits on protected branches by design:
+`RELEASE_CUT=1 git commit ...` — **one neutral name**, because a per-project
+variable means a shared hook does not recognise the release cut of the project
+it runs in.
+
+Project path exclusions go in `.claude/hook-exclusions`, one glob per line.
+They are **not** hard-coded: the two projects these hooks came from each had
+their own list baked in, which would silently exclude nothing elsewhere.
+
 ## Layout
 
 ```
