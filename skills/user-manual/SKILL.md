@@ -1,6 +1,6 @@
 ---
 name: user-manual
-description: Maintains the user manual, English as the source of truth for translations. Use in the same turn as any user-visible change: screen, field, button, command, configuration prerequisite.
+description: Maintain the user manual, English as the source of truth. Use in the same turn as any user-visible change: screen, field, button, command, prerequisite.
 ---
 
 # User manual

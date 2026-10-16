@@ -1,6 +1,6 @@
 ---
 name: verify-claim
-description: Re-measure a claim before stating it, when being wrong would change what the user does. Use before announcing a backup, copy or deploy succeeded, before saying a service or disk is present, or when a check gave a reassuring answer never seen to fail.
+description: Re-measure before stating a claim the user will act on: a backup, copy or deploy succeeded, a service or disk is present, or a check passed that was never seen to fail.
 ---
 
 # Verify before claiming

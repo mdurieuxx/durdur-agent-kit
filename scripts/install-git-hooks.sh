@@ -28,7 +28,11 @@ poser() {
     {
         echo '#!/bin/sh'
         echo "$MARQUE"
-        echo "KIT=\"$KIT\""
+        # Resolve the plugin when the hook RUNS. Remembering today's path would break
+        # on the next plugin update, whose cache directory carries the version.
+        echo "KIT=\$(ls -d \"\$HOME\"/.claude/plugins/cache/*/house-rules/*/ 2>/dev/null | sort -V | tail -1)"
+        echo "[ -d \"\$KIT\" ] || KIT=\"$KIT\"   # fall back to where it was installed from"
+        echo "[ -d \"\$KIT/hooks\" ] || { echo 'house-rules plugin not found: commit hooks skipped' >&2; exit 0; }"
         for h in "$@"; do
             echo "\"\$KIT/hooks/$h\" \"\$@\" || exit 1"
         done

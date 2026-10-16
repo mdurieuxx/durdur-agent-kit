@@ -1,6 +1,6 @@
 ---
 name: post-deploy-check
-description: Verify a deploy by exercising the deployed instance, not the local one. Use immediately after any deploy, restart, migration or configuration change that reaches a running environment.
+description: Verify a deploy against the deployed instance, not the local one. Use right after any deploy, restart, migration or configuration change.
 ---
 
 # Post-deploy check

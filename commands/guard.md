@@ -1,5 +1,6 @@
 ---
 description: Turn the destructive-command guard off or on, for one command, one project or everywhere, and show which scope is in force.
+disable-model-invocation: true
 ---
 
 # /guard — the destructive guard's switch

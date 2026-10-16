@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Write production code test-first: how to get a real red, what does not count, and the traps already paid for. Use when a change adds or alters production code.
+description: Write production code test-first and keep tests honest as code changes. Use when a change adds or alters production code or tests.
 ---
 
 # TDD

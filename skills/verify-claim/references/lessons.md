@@ -1,6 +1,6 @@
 # Checks that cannot fail verify nothing
 
-Fourteen recorded cases. Every one returned a plausible answer while measuring
+Fifteen recorded cases. Every one returned a plausible answer while measuring
 nothing, or measuring something other than what was asked. They are collected
 here because the failure shape repeats, and because reading them is cheaper than
 re-living them.
@@ -345,3 +345,27 @@ git log --format=%B | grep -ciE 'co-authored-by:.*(claude|anthropic|copilot)'
 **The habit:** for any rule the harness's defaults contradict, **count the leak in
 history before assuming the rule holds**. A rule stated in one place protects
 only the sessions that read that place.
+
+---
+
+## 15. An estimate that ignores the setting you changed
+
+Marking a command `disable-model-invocation: true` should remove it from what the
+model is told about on every turn. The tool's own cost report — which prints a
+per-component token estimate — did not move at all: the same 884 before and
+after. The natural conclusion is that the field does nothing.
+
+It does. Asked directly which commands it could see, a live session listed
+`guard` and `tokens` without the field and **omitted both with it**. The report
+is a static estimate that does not model the field.
+
+**Fix:** do not conclude from an estimate that a change is inert, nor that it
+worked. Ask the system for the behaviour itself.
+
+```sh
+claude -p "List the exact names of every command available to you containing 'guard'." < /dev/null
+```
+
+**The habit:** when a number does not move after a change, run the one experiment
+that observes the effect rather than the one that reports about it — and say in
+the docs which figure is the tool's estimate and which is the observed one.

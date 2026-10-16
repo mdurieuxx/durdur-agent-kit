@@ -1,6 +1,6 @@
 ---
 name: readable-code
-description: Write clean, readable, maintainable code: naming, function size, comments that carry the why, and the terse idioms that silently break. Use while writing or reviewing code, and whenever a line needs a second read.
+description: Write readable, maintainable code: naming, function size, comments that carry the why, terse idioms that silently break. Use when writing or reviewing code.
 ---
 
 # Readable code

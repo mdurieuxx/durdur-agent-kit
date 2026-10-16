@@ -87,6 +87,19 @@ rule:
 | | If yes |
 |
 
+## Commands you type are invisible to the model
+
+`/guard`, `/tokens` and `/install-git-hooks` carry `disable-model-invocation: true`:
+only the user runs them, so there is no reason to announce them to the model on
+every turn. **Verified by asking a live session which commands it can see** —
+with the field, `guard` and `tokens` were absent from its list; without it, both
+were there.
+
+⚠️ `claude plugin details` does **not** reflect this: it still counts those three
+(~140 tokens) in its estimate. Subtract them: **~634 tokens** reach the model.
+When an estimate does not move after a change, that does not make the change
+inert — ask the system what it actually does (lesson 15).
+
 ## Always-on rules: fragments, not plugin content
 
 A plugin has no `rules/` directory (0 of 315 official plugins), so
@@ -258,7 +271,8 @@ up, are not in it. **A floor, not a bill.**
 What a consuming project pays just for having this installed. **Read from
 `claude plugin details`, not estimated**: an earlier version of this table
 counted only the description line (about 667 tokens for the whole kit) and
-missed the per-entry overhead — the tool's own figure is **~884**.
+missed the per-entry overhead — the tool's own figure was **~884**, and is **~774** after
+trimming descriptions, with **~634** actually reaching the model (see below).
 
 | | Idle cost |
 | --- | --- |

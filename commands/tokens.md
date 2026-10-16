@@ -1,5 +1,6 @@
 ---
 description: Report token consumption for this project or all projects, from the local transcripts. Use when asked what a project cost, which consumes most, or to check a trend.
+disable-model-invocation: true
 ---
 
 # /tokens — consumption per project
