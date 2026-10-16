@@ -110,3 +110,32 @@ a large file into the context to look for something a command can find.**
 ⚠️ **And the trap this creates.** A command that measures nothing returns a
 clean-looking answer, which is worse than loading the file. Prove the command can
 fail: run it against a witness built to be found. See `verify-claim`.
+
+---
+
+## Tests follow the code
+
+> **Every path that crosses a boundary has an integration test.**
+>
+> **When code changes, its tests change with it — and a test rewritten to match
+> the code is no longer a test.**
+
+The second one is the whole difficulty. Updating an assertion until it passes
+turns a specification into a transcript of the implementation: it will agree with
+any future behaviour, including the wrong one.
+
+So when a change makes a test fail, decide **which one is wrong** and say so.
+Three outcomes, and the only forbidden move is a silent fourth:
+
+| The test was | Then |
+| --- | --- |
+| right | the code is wrong — fix the code |
+| describing behaviour that deliberately changed | rewrite it, and say in the message that the contract changed |
+| asserting nothing useful | delete it, and say what replaces it |
+
+⛔ **Never skip, comment out or loosen a test to land a change.** A skipped test
+is a test that will never be re-enabled, and its guard is gone while its name
+still suggests coverage.
+
+**A deleted test takes its regression guard with it.** If the code it covered is
+gone too, fine — say so. Otherwise it is a hole.

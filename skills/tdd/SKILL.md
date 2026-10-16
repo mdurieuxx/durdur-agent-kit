@@ -26,6 +26,47 @@ Red → green → refactor. No production code without a failing test written fi
   it. Any code involving durations will otherwise pass on a fast machine and
   fail on a slow one, or the reverse.
 
+## Integration tests
+
+Unit tests prove a function; they cannot prove that two components agree.
+
+**Every path that crosses a boundary has an integration test** — a process
+boundary, a network call, a queue, a database, a third-party API. That is where
+the failures live, and where unit tests are structurally blind.
+
+Two shapes paid for already:
+
+- four applications answered `200` on their health endpoints while every
+  registration returned 500 — a component between two of them was not running;
+- a guard was verified by checking that a table existed, on a dump where the
+  column that mattered was empty on every row.
+
+So an integration test **writes and reads back**, crosses every boundary the
+real request crosses, and asserts on **a value** — never on a status code, never
+on the mere existence of something.
+
+## When code changes, its tests change with it
+
+**A test rewritten to match the code is no longer a test.** Updating an
+assertion until it passes turns a specification into a transcript of the
+implementation: it will then agree with any future behaviour, including the wrong
+one.
+
+When a change makes a test fail, decide **which one is wrong**:
+
+| The test was | Then |
+| --- | --- |
+| right | the code is wrong — fix the code |
+| describing behaviour that deliberately changed | rewrite it, and say in the commit that the contract changed |
+| asserting nothing useful | delete it, and say what replaces it |
+
+⛔ **Never skip, comment out or loosen a test to land a change.** A skipped test
+is one that will never be re-enabled, and its guard is gone while its name still
+suggests coverage.
+
+And the check that catches the rest: **remove the guard and the suite must go
+red.** If it stays green, the test was already a transcript.
+
 ## Traps specific to this repository
 
 <!-- Each project fills this in. The entries that belong here are the ones
