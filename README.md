@@ -188,9 +188,18 @@ deliberately, and bump the version in `.claude-plugin/plugin.json`.
 states explicitly that it found nothing worth adding.** Silence is not an option:
 an unfed kit dies, and then nobody trusts it.
 
+The `kit-contribution` skill carries the procedure, including the part that is
+easy to get wrong: **material arrives generalised or it does not arrive.** Strip
+the story-id prefixes, the domain nouns, the project names, the per-project
+environment variables — and **keep the evidence**, which is a different thing.
+
+> Generalising applicability is not sanding off the incident. Confusing the two
+> is how a kit turns into generic advice nobody reads.
+
 What earns a place: a mistake that cost real time, with its evidence; a guard
 proven by making it fail on purpose; a tool-specific trap measured here; a
 pattern reused a second time.
 
 What does not: generic advice, anything the code already documents, anything
-untested, or a near-duplicate — sharpen the existing entry instead.
+untested, or a near-duplicate — sharpen the existing entry instead. And never an
+always-on rule: a plugin cannot carry one.
