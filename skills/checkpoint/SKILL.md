@@ -34,7 +34,8 @@ the checkpoint file is older than the last commit.
 
 Most of a checkpoint is derivable, so do not type it. Collect by command:
 current branch and its upstream, ahead/behind counts, staged and unstaged
-summary, the work item in progress, last test result, open pull requests.
+summary, the work item in progress, last test result, open pull requests, and any
+unprocessed entry in `.claude/kit-candidates.md` — a finding not yet offered to the kit.
 
 You write only what cannot be derived, in three short sections:
 

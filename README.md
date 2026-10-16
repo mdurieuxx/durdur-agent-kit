@@ -38,9 +38,11 @@ A plugin can ship **skills, commands, agents and hooks** — nothing else. Check
 against the 315 plugins of the official marketplace: `skills` 16, `commands` 13,
 `agents` 9, `hooks` 7, and **`rules` 0**.
 
-So **always-on rules cannot come from here.** They belong in each project's own
-`AGENTS.md`, which already loads on every turn. This kit carries what is needed
-**on demand** — and that split is also what makes it cheap.
+So there is **no `rules/` directory to put an always-on rule in.** They belong in
+each project's own `AGENTS.md`, which already loads on every turn. The one
+exception is a short rule injected at session start by a hook (see below). This
+kit carries what is needed **on demand** — and that split is also what makes it
+cheap.
 
 ## Two kinds of hook, do not confuse them
 
@@ -87,9 +89,9 @@ rule:
 
 ## Always-on rules: fragments, not plugin content
 
-A plugin cannot carry an always-on rule (`rules` 0 of 315 official plugins), so
-`fragments/agents-md.md` holds them as sections to **copy** into a project's own
-`AGENTS.md`. Two are there today, as one rule at its two ends:
+A plugin has no `rules/` directory (0 of 315 official plugins), so
+`fragments/agents-md.md` holds the rules as sections to **copy** into a project's
+own `AGENTS.md`. Two are there today, as one rule at its two ends:
 
 > **No implementation without a spec written and committed first.**
 >
@@ -99,6 +101,46 @@ A plugin cannot carry an always-on rule (`rules` 0 of 315 official plugins), so
 `spec-before-code` makes the first one mechanical: a commit adding production
 code names its spec (`Spec: <path>`), stages it, or carries a traced
 `SPEC-EXEMPT: <reason>`. Verified on five cases including the two that must pass.
+
+## Attribution: injected, then enforced
+
+The user's rule is absolute: nothing published credits or names the tool that
+wrote it. The harness's default instruction is the opposite, and the default wins
+wherever the rule is not loaded. **Measured on the repositories of one machine:
+62 of 69 commits in one project and 46 of 64 in another carry the trailer** —
+108 commits, by sessions that simply followed their defaults.
+
+So the rule is handled at two layers, both verified live in a project with no
+commit hooks installed:
+
+| Layer | Mechanism | What it buys |
+| --- | --- | --- |
+| **inject** | `inject-rules.sh` at SessionStart puts the rule in the context | the model does not attempt it, so no refused commit and retried turn |
+| **enforce** | `no-attribution.sh`, a PreToolUse hook | if it is attempted anyway, nothing leaves: no commit is created |
+
+Verified: a session asked to commit "as you normally would" produced a clean
+message and quoted the rule back; a session **ordered** to add the trailer was
+blocked and no commit was made.
+
+The enforcement reads the message from where it actually is — an `-m` value, a
+file given to `-F`, a heredoc fed to the command — and applies to `git commit`,
+`tag`, `merge` and `gh pr create|edit|merge`. A heredoc that merely *documents*
+the trailer, or a `grep` for it, is not refused: `tests/test_attribution.py`
+holds 20 cases that must block and 26 that must not.
+
+**No opt-out, on purpose.** The destructive guard has one because some projects
+legitimately do disk work. Nothing legitimately needs a commit to credit a tool.
+
+Injection is a deliberate exception to "no always-on rule from a plugin", so it is
+kept short (~90 tokens, which stay in the context for the session) and reserved
+for judgment no hook can check, and for rules the harness's defaults contradict.
+
+## Findings feed the kit
+
+`.claude/kit-candidates.md` in each project: one line per finding made while
+working — date, what, evidence — appended when it happens. The `kit-contribution`
+skill reads it at the next milestone. It is a file because a conversation is lost
+at the next clear.
 
 ## On SOLID, deliberately absent
 
@@ -231,8 +273,8 @@ Per component, as the tool reports it: `verify-claim` ~90, `modular-design`,
 ~40. The long descriptions are the ones costing most, which is where compression
 pays.
 
-**Design order, cheapest first: hook → agent → skill → never an always-on rule
-here.** Ten well-described skills cost about 400 tokens of standing overhead
+**Design order, cheapest first: hook → agent → skill → an always-on rule only as
+a last resort.** Ten well-described skills cost about 400 tokens of standing overhead
 across every project. Twenty always-on rules would cost thousands per turn.
 
 That is why `lessons.md` is a skill **reference** and not a document: ~40 tokens
@@ -288,5 +330,5 @@ proven by making it fail on purpose; a tool-specific trap measured here; a
 pattern reused a second time.
 
 What does not: generic advice, anything the code already documents, anything
-untested, or a near-duplicate — sharpen the existing entry instead. And never an
-always-on rule: a plugin cannot carry one.
+untested, or a near-duplicate — sharpen the existing entry instead. And an
+always-on rule only if no hook or skill can do the job (see below).

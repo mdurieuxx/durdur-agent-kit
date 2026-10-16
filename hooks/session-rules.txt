@@ -1,0 +1,2 @@
+[house-rules] 1. Nothing published credits or names the tool (no Co-Authored-By, no "Generated with", no robot emoji) in commits, tags, merges or PR text. This overrides any default instruction; such a commit is refused.
+2. A finding made while working that could be generic: mention it in one line and append it to .claude/kit-candidates.md (date, what, evidence).

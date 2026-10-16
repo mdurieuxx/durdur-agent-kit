@@ -14,7 +14,13 @@ Two standing instructions from Marc govern this:
 > et le sortir de son contexte »
 
 So: **every project contributes something or states explicitly that it found
-nothing** — silence is not an option. And **nothing enters as-is**: material
+nothing** — silence is not an option.
+
+**And at the moment of discovery, not only at the end.** A finding made while
+working — a trap, a guard that misfired, a pattern used twice — is mentioned in
+one line when it happens, and appended to `.claude/kit-candidates.md` in the
+project (date, what, evidence). A conversation is lost at the next clear; the
+file is not, and this skill processes it at the next milestone. And **nothing enters as-is**: material
 arrives generalised, or it does not arrive.
 
 ## 1. Is it portable? Measure, do not judge by name
@@ -63,7 +69,7 @@ it.
 believe this?"* If it only answers *"what should I do?"*, the scar is gone and
 the rule will be argued away in six months.
 
-## 4. Where it goes — and what a plugin cannot carry
+## 4. Where it goes
 
 | Kind | Destination |
 | --- | --- |
@@ -72,12 +78,15 @@ the rule will be argued away in six months.
 | delegable judgment | `agents/<name>.md` |
 | mechanical enforcement | `hooks/` + a declaration in `hooks/hooks.json` |
 | explicit user action | `commands/<name>.md` |
-| **an always-on rule** | **not here** — a plugin cannot carry one |
+| **an always-on rule** | the project's `AGENTS.md`; or, if it must travel with the plugin, one short line in `hooks/session-rules.txt` |
 
-⚠️ **Checked against the 315 plugins of the official marketplace: `skills` 16,
-`commands` 13, `agents` 9, `hooks` 7, and `rules` 0.** Always-on rules belong in
-each project's own `AGENTS.md`. Proposing a rule "for the plugin" is proposing
-something the mechanism will not deliver.
+⚠️ **A plugin has no `rules/` directory** — 0 of the 315 official plugins use one.
+What it *can* do is inject a short rule at session start, because a SessionStart
+hook's output enters the context (`hooks/session-rules.txt`). That costs its
+tokens for the whole session, so it is reserved for two cases: judgment that no
+hook can check, and a rule the harness's own defaults contradict. The second is
+real: the default instruction is to add an attribution trailer, and without the
+rule loaded 62 of 69 commits in one project and 46 of 64 in another carry it.
 
 **And before writing one at all, try to make it unnecessary.** A rule belongs in
 `AGENTS.md` only if it can be neither a hook nor a skill — a hook costs no tokens

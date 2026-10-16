@@ -1,6 +1,6 @@
 # Checks that cannot fail verify nothing
 
-Thirteen recorded cases. Every one returned a plausible answer while measuring
+Fourteen recorded cases. Every one returned a plausible answer while measuring
 nothing, or measuring something other than what was asked. They are collected
 here because the failure shape repeats, and because reading them is cheaper than
 re-living them.
@@ -317,3 +317,31 @@ block drifts toward blocking everything.
 And when a case fails, decide **which side is wrong** before touching either.
 One of the failures here was the *test* (`yes | head`, listed as allowed on a
 guess); rewriting the code to satisfy it would have been the mistake.
+
+---
+
+## 14. A rule that depends on being remembered
+
+The rule "nothing published credits the tool that wrote it" lived in a memory
+file and in the instructions of one project. The harness's default instruction
+says the opposite, and wins in every session that does not load the rule.
+
+Nobody noticed, because each commit looked fine. Counting did: over 14
+repositories, **108 of 867 commits carried the trailer** — 62 of 69 in one
+project, 46 of 64 in another, none in the rest. Two projects, driven by sessions
+that simply followed their defaults, and no failure anywhere to point at.
+
+**Fix, in two layers.** Inject the rule at session start, so the model does not
+attempt it. Enforce it where the text leaves, so a commit carrying it is refused
+before it exists. Verified live in a project with no commit hooks installed: the
+first session added the trailer; with the plugin, a session asked to commit as
+usual produced a clean message and quoted the rule back; one *ordered* to add it
+was blocked and created no commit.
+
+```sh
+git log --format=%B | grep -ciE 'co-authored-by:.*(claude|anthropic|copilot)'
+```
+
+**The habit:** for any rule the harness's defaults contradict, **count the leak in
+history before assuming the rule holds**. A rule stated in one place protects
+only the sessions that read that place.

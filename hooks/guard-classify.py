@@ -18,22 +18,14 @@ substring version had: `git push -f` with nothing after it, `mkswap`, and
 `printf CONFIRM |`.
 """
 import re
-import shlex
 import sys
 
+from shellparse import (FEEDS_A_SHELL, flags_of, nested_commands, real_command,
+                        split_heredocs, split_segments, tokenize)
+
 DISK = re.compile(r'^/dev/(sd|hd|vd|xvd|nvme|mmcblk|md|dm-|mapper/|loop|nbd|zram|disk/)')
-SHELLS = {'sh', 'bash', 'zsh', 'dash', 'ksh'}
 CONFIRMATIONS = {'CONFIRM', 'EFFACER', 'DELETE', 'YES'}
 
-# Programs that run another program. Value: the options that consume an argument.
-WRAPPERS = {
-    'sudo': {'-u', '-g', '-C', '-h', '-p', '-r', '-t', '-T', '-U', '-D', '-R'},
-    'doas': {'-u', '-C'}, 'env': {'-u', '-C', '-S'}, 'nohup': set(), 'time': set(),
-    'nice': {'-n'}, 'ionice': {'-c', '-n', '-p'}, 'timeout': {'-s', '-k'},
-    'command': set(), 'exec': set(), 'stdbuf': {'-i', '-o', '-e'}, 'setsid': set(),
-    'xargs': {'-I', '-n', '-P', '-L', '-d', '-s', '-E', '-a'}, 'watch': {'-n', '-d'},
-}
-SSH_OPTIONS_WITH_ARGUMENT = set('-b -c -D -E -e -F -I -i -J -L -l -m -O -o -p -Q -R -S -W -w'.split())
 
 # Flags that only LOOK, per tool. Anything else on these tools writes.
 SGDISK_READ_ONLY = {'-p', '--print', '-v', '--verify', '-i', '--info', '-E', '--end-of-largest',
@@ -45,109 +37,6 @@ PARTED_WRITE_COMMANDS = {'mklabel', 'mktable', 'mkpart', 'rm', 'resizepart', 'na
                          'rescue', 'move', 'resize', 'mkfs', 'disk_set', 'disk_toggle'}
 
 BLOCK_DEVICE_WRITE = 'irreversible write to a block device'
-HEREDOC = re.compile(r"<<-?\s*(['\"]?)(\w+)\1([^\n]*)\n(.*?)\n[ \t]*\2[ \t]*(?:\n|$)", re.S)
-FEEDS_A_SHELL = re.compile(r'(^|[\s;|&])((ba|z|da|k)?sh|ssh)(\s|$)')
-
-
-def flags_of(args):
-    """Flags present, with combined short flags split: -af -> {-a, -f}; --x=1 -> {--x}."""
-    flags = set()
-    for arg in args:
-        arg = arg.split('=')[0]
-        if arg.startswith('--'):
-            flags.add(arg)
-        elif re.fullmatch(r'-[A-Za-z]+', arg):
-            flags.update('-' + letter for letter in arg[1:])
-    return flags
-
-
-def split_heredocs(command):
-    """Drop heredoc bodies -- they are text -- but keep any handed to a shell, which runs them."""
-    scripts = []
-
-    def drop(match):
-        line_start = command.rfind('\n', 0, match.start()) + 1
-        consumer = command[line_start:match.start()] + match.group(3)
-        if FEEDS_A_SHELL.search(consumer):
-            scripts.append(match.group(4))
-        return match.group(3) + '\n'
-
-    return HEREDOC.sub(drop, command), scripts
-
-
-def split_segments(command):
-    """Split on ; & | newline ( ) and backtick, outside quotes. Yields (segment, separator)."""
-    segments, current, quote, i = [], [], None, 0
-    while i < len(command):
-        char = command[i]
-        if quote:
-            current.append(char)
-            if char == '\\' and quote == '"' and i + 1 < len(command):
-                i += 1
-                current.append(command[i])
-            elif char == quote:
-                quote = None
-        elif char in '\'"':
-            quote = char
-            current.append(char)
-        elif char == '\\' and i + 1 < len(command):
-            current.append(char)
-            i += 1
-            current.append(command[i])
-        elif char in ';&|\n()`':
-            separator = char
-            if char in '|&' and command[i + 1:i + 2] == char:
-                separator, i = char * 2, i + 1
-            segments.append((''.join(current), separator))
-            current = []
-        else:
-            current.append(char)
-        i += 1
-    segments.append((''.join(current), ''))
-    return segments
-
-
-def tokenize(segment):
-    try:
-        return shlex.split(segment)
-    except ValueError:
-        return segment.split()
-
-
-def real_command(words):
-    """Skip VAR=value and wrappers such as sudo/timeout; return (program, its arguments)."""
-    i = 0
-    while i < len(words):
-        word = words[i]
-        if re.match(r'^[A-Za-z_][A-Za-z0-9_]*=', word):
-            i += 1
-            continue
-        name = word.rsplit('/', 1)[-1]
-        if name not in WRAPPERS:
-            return name, words[i + 1:]
-        i += 1
-        while i < len(words) and words[i].startswith('-'):
-            i += 2 if words[i] in WRAPPERS[name] else 1
-        if name == 'timeout' and i < len(words):
-            i += 1  # the duration
-    return None, []
-
-
-def nested_commands(program, args):
-    """Commands carried inside an argument: sh -c '...', ssh host '...', eval ..."""
-    if program in SHELLS or program == 'su':
-        for position, arg in enumerate(args):
-            if re.fullmatch(r'-[a-z]*c[a-z]*', arg) and position + 1 < len(args):
-                return [args[position + 1]]
-    if program == 'eval':
-        return [' '.join(args)]
-    if program == 'ssh':
-        position = 0
-        while position < len(args) and args[position].startswith('-'):
-            position += 2 if args[position] in SSH_OPTIONS_WITH_ARGUMENT else 1
-        remote = args[position + 1:]  # position is the host
-        return [' '.join(remote)] if remote else []
-    return []
 
 
 def piped_confirmation(words, separator):
@@ -240,7 +129,8 @@ def destructive_git(args):
 def verdict(command, depth=0):
     if depth > 4:
         return None
-    command, shell_scripts = split_heredocs(command)
+    command, bodies = split_heredocs(command)
+    shell_scripts = [body for consumer, body in bodies if FEEDS_A_SHELL.search(consumer)]
     for script in shell_scripts:
         hit = verdict(script, depth + 1)
         if hit:
