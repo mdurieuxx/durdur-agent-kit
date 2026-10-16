@@ -76,8 +76,14 @@ the rule will be argued away in six months.
 
 ⚠️ **Checked against the 315 plugins of the official marketplace: `skills` 16,
 `commands` 13, `agents` 9, `hooks` 7, and `rules` 0.** Always-on rules belong in
-each project's own `AGENTS.md`, which already loads every turn. Proposing a rule
-"for the plugin" is proposing something the mechanism will not deliver.
+each project's own `AGENTS.md`. Proposing a rule "for the plugin" is proposing
+something the mechanism will not deliver.
+
+**And before writing one at all, try to make it unnecessary.** A rule belongs in
+`AGENTS.md` only if it can be neither a hook nor a skill — a hook costs no tokens
+and is obeyed rather than read; a skill is paid only when invoked. On one real
+`AGENTS.md`, 7 of 15 sections already named the hook enforcing them, so they
+could have been one line each.
 
 ## 5. The token budget
 
