@@ -125,6 +125,20 @@ rate.
 
 ---
 
+## Modular
+
+> **A module you cannot delete without editing five others is not a module.**
+>
+> **A dependency on something you did not create is declared and verified at
+> startup, never assumed.**
+
+Deletability and isolated testability are the two tests that cannot be argued
+with. And the dangerous coupling is the one nothing reports: a backup pointed at
+a service by name kept succeeding after the service moved, having saved nothing.
+
+Procedure, with six questions and the measurement that settles an argument:
+`modular-design`.
+
 ## Readable over clever
 
 > **Ten descriptive lines beat one line nobody can read.**

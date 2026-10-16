@@ -33,19 +33,16 @@ n=$(grep -c X "$f") || true     # grep exits 1 when it matches nothing
 n=${n:-0}
 ```
 
-## Modular
+## Modular — while writing
+
+Boundaries are `modular-design`'s subject. Two habits belong here, at the
+keyboard:
 
 - **A function needing "and" in its name is two functions.** The name is the
   test, not a line count.
-- **Nothing reads the clock.** Inject it. Otherwise a test passes on a fast
-  machine and fails on a slow one, and nobody can tell which run was right.
-- **Nothing reads the real environment** outside one boundary that does, named
+- **Nothing reads the clock or the real environment** outside one boundary named
   as such. Already paid for: a test green on a variable present in the deployed
   process and absent from the runner.
-- **One reason to exist per module**, and say it in the first line of the file.
-  If that sentence needs a comma, the module is two.
-- **Depend on the narrowest thing that works** — a value over an object, an
-  object over a container, a container over a framework.
 
 ## Robust
 
