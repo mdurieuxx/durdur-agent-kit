@@ -4,22 +4,7 @@ Always-on rules cannot ship in a plugin (`rules`: 0 of the 315 official
 plugins), so they live here as sections to **copy** into a project's own
 `AGENTS.md`.
 
-## What belongs in AGENTS.md — three questions, not a line count
-
-A line limit is the wrong constraint. Measured: a 196-line `AGENTS.md` costs
-~2 242 tokens a turn against ~378 000 tokens of context re-read per message —
-**0.6 %**. Cost is not the argument, and "lines" is not the unit: a table does
-not weigh what prose weighs.
-
-A cap also creates a bad reflex. On hitting it you cut the **newest** rule rather
-than the weakest, or compress until the *why* disappears — and a rule without its
-why gets argued away.
-
-**A rule belongs here only if it can be neither a hook nor a skill.** Ask, per
-rule:
-
-| | If yes |
-| --- | --- |
+| --- |
 | Could a hook catch it? | make it a hook — 0 tokens, and mechanical enforcement is not read, it is obeyed |
 | Is it a procedure? | make it a skill — paid only when invoked |
 | Is it always-on judgment? | then it belongs here |
@@ -46,8 +31,7 @@ Code written before its spec defines its own success criteria: always correct,
 never checkable. An item that only says what to do is not documented, it is
 assigned.
 
-Commits naming their spec: `Spec: <path>`. Enforced by `spec-before-code`;
-traced exception `SPEC-EXEMPT: <reason>`.
+Enforced by `spec-before-code` — `Spec: <path>`, exception `SPEC-EXEMPT:`.
 
 ## Tests
 
@@ -60,13 +44,13 @@ traced exception `SPEC-EXEMPT: <reason>`.
 > the local one.**
 
 Unit tests cannot prove two components agree. An assertion adjusted until it
-passes becomes a transcript of the implementation, and will then agree with any
+passes becomes a transcript of the implementation, and will agree with any
 future behaviour. A green suite on a developer machine says nothing about what
 is running.
 
 ⛔ Never skip, comment out or loosen a test to land a change.
 
-Procedures: `tdd`, `post-deploy-check`.
+Parity enforced by `tdd-test-parity`. Procedures: `tdd`, `post-deploy-check`.
 
 ## Work on the machine, not in the context
 
@@ -98,9 +82,8 @@ Procedure and twelve recorded cases: `verify-claim`.
 >
 > **Verified at startup, masked on display.**
 
-A missing secret broke a deployment three times in one session; a database
-password is versioned in clear to this day. ⚠️ `.gitignore` does **not** act on
-an already-tracked file — a value committed once must be **revoked**.
+⚠️ `.gitignore` does **not** act on an already-tracked file — a value committed
+once must be **revoked**, not ignored.
 
 Enforced by `no-literal-secret`.
 

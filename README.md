@@ -54,6 +54,23 @@ Project path exclusions go in `.claude/hook-exclusions`, one glob per line.
 They are **not** hard-coded: the two projects these hooks came from each had
 their own list baked in, which would silently exclude nothing elsewhere.
 
+## What belongs in AGENTS.md — three questions, not a line count
+
+A line limit is the wrong constraint. Measured: a 196-line `AGENTS.md` costs
+~2 242 tokens a turn against ~378 000 tokens of context re-read per message —
+**0.6 %**. Cost is not the argument, and "lines" is not the unit: a table does
+not weigh what prose weighs.
+
+A cap also creates a bad reflex. On hitting it you cut the **newest** rule rather
+than the weakest, or compress until the *why* disappears — and a rule without its
+why gets argued away.
+
+**A rule belongs here only if it can be neither a hook nor a skill.** Ask, per
+rule:
+
+| | If yes |
+|
+
 ## Always-on rules: fragments, not plugin content
 
 A plugin cannot carry an always-on rule (`rules` 0 of 315 official plugins), so
