@@ -366,6 +366,13 @@ GitOps follows `develop` while `main` holds what is released.
 **changes behaviour in every project that installed the plugin**. Merge
 deliberately, and bump the version in `.claude-plugin/plugin.json`.
 
+## Default model
+
+A plugin cannot set the model. `/house-rules:default-model` writes
+`"model": "opusplan"` (Opus plans, Sonnet executes) into `~/.claude/settings.json`,
+keeping every other key; `--project` targets the repository instead. User-only, so it
+costs no tokens until you type it.
+
 ## Every fix goes through a GitHub issue
 
 Open an issue first (template: *Fix or finding*): what went wrong, where it was
