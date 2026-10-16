@@ -137,3 +137,34 @@ comparison, three times in one session. A comment restating the code is noise;
 one carrying the incident is usually the most valuable line in the file.
 
 Procedure, with five such lines and what each cost: `readable-code`.
+
+---
+
+## Dependency versions
+
+> **The latest version of a library is preferred. A pin needs a written reason.**
+
+An unexplained pin is a decision nobody can revisit, and the version drifts out
+of support while everyone assumes someone chose it.
+
+⚠️ **The boundary: latest on your side can break a consumer you do not control.**
+Measured here — a filesystem created with the newest tooling enabled features
+that the **older kernel meant to read it refuses**. Newest is the default, not
+the goal: check what has to consume the output.
+
+Procedure: `dependency-review`.
+
+## Performance
+
+> **Quality first, performance immediately after, everything else behind both.**
+
+Never the reverse: a fast answer that is wrong, or unreadable, costs more than
+it saves. But "we will optimise later" is how later never comes.
+
+⚠️ **Measure before optimising, and expect the measurement to point elsewhere.**
+Measured here: a kit's always-loaded text was ~600 tokens a turn while the same
+project re-read ~378 000 tokens of context per message. Compressing the first
+was visible work and almost no gain; the cost was architectural.
+
+So: profile, fix the layer the numbers name, and re-measure. An optimisation
+without a before-and-after number is a guess with extra steps.
