@@ -54,6 +54,21 @@ Project path exclusions go in `.claude/hook-exclusions`, one glob per line.
 They are **not** hard-coded: the two projects these hooks came from each had
 their own list baked in, which would silently exclude nothing elsewhere.
 
+## Always-on rules: fragments, not plugin content
+
+A plugin cannot carry an always-on rule (`rules` 0 of 315 official plugins), so
+`fragments/agents-md.md` holds them as sections to **copy** into a project's own
+`AGENTS.md`. Two are there today, as one rule at its two ends:
+
+> **No implementation without a spec written and committed first.**
+>
+> **No backlog item picked up until it states what it changes and how "done"
+> will be judged.**
+
+`spec-before-code` makes the first one mechanical: a commit adding production
+code names its spec (`Spec: <path>`), stages it, or carries a traced
+`SPEC-EXEMPT: <reason>`. Verified on five cases including the two that must pass.
+
 ## Layout
 
 ```

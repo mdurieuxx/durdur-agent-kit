@@ -38,7 +38,7 @@ poser() {
 }
 
 poser pre-commit enforce-feature-branch.sh english-only.sh no-assistant-in-code.sh
-poser commit-msg no-assistant-attribution.sh tdd-test-parity.sh
+poser commit-msg no-assistant-attribution.sh tdd-test-parity.sh spec-before-code.sh
 
 echo
 echo "Project exclusions go in .claude/hook-exclusions, one glob per line."
