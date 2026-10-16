@@ -1,5 +1,5 @@
 ---
-description: Turn the destructive-command guard off or back on, for one command, one project or everywhere — and show which scope is currently in force.
+description: Turn the destructive-command guard off or on, for one command, one project or everywhere, and show which scope is in force.
 ---
 
 # /guard — the destructive guard's switch

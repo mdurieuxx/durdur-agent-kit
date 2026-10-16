@@ -1,6 +1,6 @@
 ---
 name: checkpoint
-description: Write a session checkpoint before clearing context, and decide whether clearing is the right move. Use it when the context window is filling, when the subject changes, or before ending a work session.
+description: Write a session checkpoint before clearing context, and decide whether to clear. Use when the context window fills, the subject changes, or a work session ends.
 ---
 
 # Session checkpoint

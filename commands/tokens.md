@@ -1,5 +1,5 @@
 ---
-description: Report token consumption for this project, or for every project, read from the local session transcripts. Use when asked what a project has cost, which project consumes most, or to check a consumption trend.
+description: Report token consumption for this project or all projects, from the local transcripts. Use when asked what a project cost, which consumes most, or to check a trend.
 ---
 
 # /tokens — consumption per project

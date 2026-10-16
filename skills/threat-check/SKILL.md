@@ -1,6 +1,6 @@
 ---
 name: threat-check
-description: Name the asset, the abuse, and the test that proves it impossible. Use it on any change touching accounts, entitlements, credentials or an external input.
+description: Name the asset, the abuse, and the test that proves it impossible. Use on any change touching accounts, entitlements, credentials or external input.
 ---
 
 # Threat check

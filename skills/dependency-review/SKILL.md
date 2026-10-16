@@ -1,6 +1,6 @@
 ---
 name: dependency-review
-description: Justify a dependency before adding or upgrading it. Use it on every change to a dependency manifest.
+description: Justify a dependency before adding or upgrading it. Use on any change to a dependency manifest.
 ---
 
 # Dependency review

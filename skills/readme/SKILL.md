@@ -1,6 +1,6 @@
 ---
 name: readme
-description: Maintains README.md, the developer entry point. Use it at every batch or sprint closure, before a release, and whenever setup, architecture or contribution rules change.
+description: Maintains README.md, the developer entry point. Use at batch or sprint closure, before a release, and when setup, architecture or contribution rules change.
 ---
 
 # README

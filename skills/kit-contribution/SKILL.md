@@ -1,6 +1,6 @@
 ---
 name: kit-contribution
-description: Move material into this shared kit, or decide it should stay in its project. Use when porting a rule, skill, agent or hook out of a project, when a mistake has just cost real time, at a project milestone or close, and when asked what we learned.
+description: Port material into the shared kit, generalised, or decide it stays in its project. Use when porting a rule, skill, agent or hook, after a mistake cost real time, at a milestone or close, or when asked what we learned.
 ---
 
 # Into the kit, or staying put
@@ -27,12 +27,9 @@ cpt() { c=$(grep -ciE "$2" "$1" 2>/dev/null) || true; echo "${c:-0}"; }
 cpt file.md 'STORY-|projectname|domainnoun|otherdomainnoun'
 ```
 
-⚠️ `grep -c` prints `0` and exits `1`. **Never add `|| echo 0`** — it appends a
-second zero and every later comparison dies or is skipped silently. That mistake
-was made three times in one session; see `verify-claim`, case 12.
-
-And **prove the counter counts**: run it on a witness file you built to contain
-two mentions. A scan that cannot find what it looks for proves nothing.
+⚠️ Two traps here, both in `verify-claim` → cases 12 and 3: never write
+`|| echo 0` after `grep -c`, and **prove the counter on a witness** before
+trusting a zero.
 
 ## 2. What must be stripped
 
@@ -82,15 +79,12 @@ the rule will be argued away in six months.
 each project's own `AGENTS.md`, which already loads every turn. Proposing a rule
 "for the plugin" is proposing something the mechanism will not deliver.
 
-## 5. The token budget, before you write
+## 5. The token budget
 
-Only **descriptions** are charged on every turn of every project; bodies cost
-only when invoked; hooks, scripts and READMEs cost **nothing**.
-
-So: write the description for routing, and keep it tight. Write the body for use,
-and let it breathe. **Do not compress a hook or a script to save tokens** — there
-is nothing to save, and comments carrying an incident's origin are worth more
-than the bytes.
+Only **descriptions** are charged every turn; bodies cost only when invoked;
+hooks and scripts cost nothing. So write the description tight for routing, let
+the body breathe — and **never compress a hook or a script to save tokens**,
+there is nothing there to save.
 
 ## 6. Report
 
