@@ -137,8 +137,12 @@ What a consuming project pays, per turn, just for having this installed:
 | a skill's **body** | 800–2500 tokens, **only when invoked** |
 | an always-on **rule** | its full weight, **every turn** |
 
-Measured on real installed plugins: skill descriptions run 144–204 characters
-(36–51 tokens); bodies run 3.3–10 KB and cost nothing until used.
+Measured across every installed plugin (18 skills): descriptions run
+106–203 characters, so **26–50 tokens each**; bodies run 3.3–10 KB and cost
+nothing until used.
+
+⚠️ An earlier version of this line said 144–204. That came from measuring one
+plugin's five skills and generalising — the kind of inference case 12 is about.
 
 **Design order, cheapest first: hook → agent → skill → never an always-on rule
 here.** Ten well-described skills cost about 400 tokens of standing overhead

@@ -55,7 +55,7 @@ the user means it. Ask for confirmation on this one.
 No marker needed, nothing to clean up afterwards:
 
 ```sh
-DESTRUCTIVE_GUARD=off <the command>
+DESTRUCTIVE_GUARD=off sudo wipefs -a /dev/sdX    # the command, inline
 ```
 
 Prefer this when a project needs the guard off **once**. A permanent marker for a

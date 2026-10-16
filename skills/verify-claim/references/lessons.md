@@ -1,6 +1,6 @@
 # Checks that cannot fail verify nothing
 
-Ten recorded cases. Every one returned a plausible answer while measuring
+Twelve recorded cases. Every one returned a plausible answer while measuring
 nothing, or measuring something other than what was asked. They are collected
 here because the failure shape repeats, and because reading them is cheaper than
 re-living them.
@@ -118,8 +118,18 @@ r=$(echo "$f" | sed 's#^/old/prefix#/new/prefix#')
 ## 7. A guard that checked the table, not the column
 
 A database backup guard verified `CREATE TABLE public.participant_accounts` was
-present. It passed every night — including on a dump where **533 accounts had no
-credential at all**, because the schema had changed and the column moved.
+present. It passed every night — and on the night it mattered it passed a dump
+whose 533 accounts had **`password_hash` empty on every row**.
+
+⚠️ **And the first reading of that was wrong too.** The conclusion drawn was
+"533 accounts with no credential", which would have been a disaster. The
+credentials had simply **moved column**: a schema change had added `code_key` and
+`code_sealed`, and all 533 rows carried both. Nothing was lost.
+
+So there were two failures stacked. The guard could not tell a credential-bearing
+dump from a credential-less one — a real defect. And the human reading of its
+silence invented a loss that had not happened — the worse of the two, because it
+nearly triggered a restore over good data.
 
 **Fix:** count what matters, and resolve column positions from the header so a
 schema change cannot silently invalidate the guard.
@@ -238,3 +248,40 @@ then it protects nothing.
 *or a tired operator* could reorder, abbreviate or space differently — then test
 each form. This hole existed for four minutes because the guard was tested
 immediately. Untested, it would have read as protection for months.
+
+---
+
+## 12. `grep -c` with a fallback that adds a second number
+
+Made **three times in a single session**, which is why it gets its own entry
+rather than hiding inside case 8.
+
+```sh
+n=$(grep -c PATTERN "$f" 2>/dev/null || echo 0)
+[ "$n" -gt 2 ] && echo "found"
+```
+
+`grep -c` **already prints `0`** when it matches nothing — and exits `1`. So the
+`|| echo 0` appends a second zero, `$n` becomes `0\n0`, and every comparison
+dies with *integer expression expected*. Under `set -e` the script stops; without
+it, the test is skipped and **the loop reports a clean result having evaluated
+nothing**.
+
+The first time, it declared two repositories free of French without checking a
+single file. The second, it printed a coupling table whose verdict column was
+wrong throughout.
+
+**Fix:** `grep -c` needs no fallback at all, only permission to exit non-zero.
+
+```sh
+n=$(grep -c PATTERN "$f" 2>/dev/null) || true
+n=${n:-0}
+```
+
+And the same trap wears other clothes: `echo -` prints an empty line in zsh, not
+a dash — which silently emptied a variable in the same table and sent whole rows
+down the wrong branch.
+
+**The habit that catches all of them:** before trusting a scan that reports
+"nothing found", run it against a **witness** you built to be found. If the
+witness is not detected, the scan proves nothing.
