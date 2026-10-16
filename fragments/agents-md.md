@@ -98,10 +98,9 @@ Procedure and twelve recorded cases: `verify-claim`.
 >
 > **Verified at startup, masked on display.**
 
-Origin: a missing secret broke a deployment **three times in one session**, and a
-database password is versioned in clear in an infrastructure repository to this
-day. `.gitignore` does **not** act on an already-tracked file — a value committed
-once must be **revoked**, not merely ignored.
+A missing secret broke a deployment three times in one session; a database
+password is versioned in clear to this day. ⚠️ `.gitignore` does **not** act on
+an already-tracked file — a value committed once must be **revoked**.
 
 Enforced by `no-literal-secret`.
 
@@ -109,25 +108,20 @@ Enforced by `no-literal-secret`.
 
 > **Fail-closed, and ownership lives in the model — not in a review habit.**
 
-Origin: a **critical IDOR across 14 routers**, every one reading an identifier
-from the request and trusting it. The mechanism is structural: ownership
-expressed in the model, one central guard, and a default that denies.
+A **critical IDOR across 14 routers**, every one trusting an identifier read
+from the request. The mechanism is structural, not a review habit: ownership in
+the model, one central guard, a default that denies.
 
-⚠️ **A presentation field is not a mechanism.** A hidden button is not an
-authorisation.
-
-Procedure: `threat-check`.
+Procedure, and the false comforts to avoid: `threat-check`.
 
 ## The input boundary
 
 > **Never interpolate a parsed value into a query, a template, a shell command
 > or a path.**
 
-Anything read from a third party is the highest-value target and the component
-least likely to be watched. Parameterise, or reject.
-
-⚠️ **Bound everything that comes from outside** — size, count, depth, rate. An
-unbounded input is a denial of service waiting to be discovered.
+Third-party input is the highest-value target and the least watched component.
+Parameterise, or reject. **Bound everything from outside** — size, count, depth,
+rate.
 
 ---
 
@@ -137,13 +131,9 @@ unbounded input is a denial of service waiting to be discovered.
 >
 > **Code says what it does; a comment says why it exists.**
 
-Terseness that depends on an invisible precondition is the most expensive kind.
-Measured here: `grep -c X f || echo 0` reads as a safe default and returns
-`0\n0`, because `grep -c` already prints `0` before exiting `1`. It silently
-broke every comparison after it — **three times in one session**.
+Terseness correct only under a condition invisible at the call site is the
+expensive kind: `grep -c X f || echo 0` returns `0\n0` and broke every later
+comparison, three times in one session. A comment restating the code is noise;
+one carrying the incident is usually the most valuable line in the file.
 
-A comment restating the code is noise. A comment carrying the incident that
-produced the line is often the most valuable line in the file, and the first one
-a later reader needs.
-
-Procedure: `readable-code`.
+Procedure, with five such lines and what each cost: `readable-code`.
