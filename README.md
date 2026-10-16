@@ -43,6 +43,21 @@ already exists and has been used:
 Nothing is copied in before it is reviewed. A kit that accumulates becomes a kit
 nobody reads.
 
+## Branches
+
+`main` is the released state and the default branch — a marketplace is fetched
+from the default branch, so `main` is what an install sees. **Work happens on
+`develop`**, and reaches `main` by merge.
+
+This is the house convention across these repositories, stated by Marc on
+2026-10-16: **`develop` and `main`**. Fifteen of his repositories default to
+`main`, six carry a `develop`; `durdur-home-infra-stacks` is the reference — its
+GitOps follows `develop` while `main` holds what is released.
+
+⚠️ Consequence for this repo specifically: a rule, skill or hook merged to `main`
+**changes behaviour in every project that installed the plugin**. Merge
+deliberately, and bump the version in `.claude-plugin/plugin.json`.
+
 ## The one rule about this repository
 
 **Every project either contributes a rule, a skill, an agent or a lesson here, or
