@@ -1,0 +1,10 @@
+# Secrets are NEVER committed. .gitignore does not act on an already-tracked
+# file: a value committed once must be revoked, not merely ignored.
+.env
+*.env
+!.env.example
+*.key
+*.pem
+node_modules/
+__pycache__/
+*.log

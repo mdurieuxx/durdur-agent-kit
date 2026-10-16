@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "durdur-agent-kit",
+  "owner": {
+    "name": "Marc Durieux",
+    "email": "durieux.marc@gmail.com"
+  },
+  "metadata": {
+    "description": "Shared working agreement, skills, agents and guards, referenced by every project instead of copied"
+  },
+  "plugins": [
+    {
+      "name": "house-rules",
+      "source": "./",
+      "description": "The rules that hold on every turn, the skills that encode repeatable procedures, and the hooks that enforce them mechanically.",
+      "version": "0.1.0",
+      "author": { "name": "Marc Durieux" },
+      "repository": "https://github.com/mdurieuxx/durdur-agent-kit",
+      "keywords": ["rules", "skills", "hooks", "agents", "verification"]
+    }
+  ]
+}
