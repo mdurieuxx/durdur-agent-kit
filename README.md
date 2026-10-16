@@ -13,23 +13,56 @@ Installed once as a plugin, updated with one command, versioned here.
 /plugin install house-rules@durdur-agent-kit
 ```
 
-A project then carries only what is **specific to it** — its own `AGENTS.md`
-section, its own path-scoped rules under `.claude/rules/`. Everything general
-comes from here and stays in step on its own.
+⚠️ **Unverified against a private repository.** This repo is private; whether a
+marketplace install authenticates against it has not been tested. Test it before
+relying on it, and fall back to a public repo or a local marketplace path if it
+does not.
+
+### What lives here, and what does not
+
+A plugin can ship **skills, commands, agents and hooks** — nothing else. Checked
+against the 315 plugins of the official marketplace: `skills` 16, `commands` 13,
+`agents` 9, `hooks` 7, and **`rules` 0**.
+
+So **always-on rules cannot come from here.** They belong in each project's own
+`AGENTS.md`, which already loads on every turn. This kit carries what is needed
+**on demand** — and that split is also what makes it cheap.
 
 ## Layout
 
 ```
 .claude-plugin/marketplace.json   this repo as a marketplace
-.claude-plugin/plugin.json        the house-rules plugin
-rules/                            always-on rules (AGENTS.md material)
+.claude-plugin/plugin.json        the house-rules plugin (version lives HERE only)
 skills/<name>/SKILL.md            repeatable procedures
+skills/<name>/references/         material a skill opens only when it needs it
 agents/<name>.md                  delegable judgment
+hooks/hooks.json                  declares the hooks, with ${CLAUDE_PLUGIN_ROOT}
 hooks/*.sh                        mechanical enforcement
 commands/                         slash commands
-docs/lessons.md                   11 checks that returned a plausible answer
-                                  while measuring nothing
 ```
+
+## Token economy, measured
+
+What a consuming project pays, per turn, just for having this installed:
+
+| | Idle cost |
+| --- | --- |
+| a **hook** | **0** — it runs outside the context |
+| an **agent** | **0** until it is spawned |
+| a **skill** | **~40 tokens** — its description only, for routing |
+| a skill's **body** | 800–2500 tokens, **only when invoked** |
+| an always-on **rule** | its full weight, **every turn** |
+
+Measured on real installed plugins: skill descriptions run 144–204 characters
+(36–51 tokens); bodies run 3.3–10 KB and cost nothing until used.
+
+**Design order, cheapest first: hook → agent → skill → never an always-on rule
+here.** Ten well-described skills cost about 400 tokens of standing overhead
+across every project. Twenty always-on rules would cost thousands per turn.
+
+That is why `lessons.md` is a skill **reference** and not a document: ~40 tokens
+idle instead of ~1930 always — or 0 and unreachable, which is where it sat
+before this review.
 
 ## Status: content under review
 
@@ -38,7 +71,10 @@ already exists and has been used:
 
 - the **measured common core** of `apex-analyzer-v4` and `k-forge-v2` — the ten
   items present in both, which is the empirical definition of "reusable here"
-- `docs/lessons.md`, the only piece that existed nowhere else
+- the three gitflow pieces already proven in both projects: the
+  `enforce-feature-branch` hook, the `## Git` section, and the release flow
+  (today an ADR plus a script, which means you must know they exist to find
+  them — a skill would make it discoverable)
 
 Nothing is copied in before it is reviewed. A kit that accumulates becomes a kit
 nobody reads.
