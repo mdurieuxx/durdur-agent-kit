@@ -57,18 +57,25 @@ runs `wipefs`, `mkfs` and `docker prune`; three such commands were needed to
 format the external disk that made a Synology recovery possible. A guard that
 obstructs normal work gets switched off wholesale, and then protects nothing.
 
-So when it fires, the agent **offers the choice** rather than deciding:
+So when it fires, the agent **offers the choice** rather than deciding, and
+`/guard` is the switch. Three scopes, narrowest first — all four behaviours
+verified:
 
-```
-KEEP     — the user runs it themselves, or approves THIS exact command
-DISABLE  — for this project only:
-           echo "<reason>" > .claude/destructive-guard.off
-```
+| Scope | How | Use it when |
+| --- | --- | --- |
+| **one command** | `DESTRUCTIVE_GUARD=off <cmd>` | a one-off need; nothing to clean up after |
+| **one project** | `/guard off "<reason>"` → `.claude/destructive-guard.off` | the project does this work for a living |
+| **everywhere** | `/guard off --global` → `~/.claude/destructive-guard.off` | you mean it; it covers projects not yet created |
 
-The marker is looked up from the working directory **upwards**, so one in a
-parent project covers its subtrees. Verified: a marker in one project does not
-leak into another. **Commit it** — it is a recorded decision with its reason, not
-local noise.
+`/guard status` reports which scope is in force — and **proves it** by running
+the guard on a command it should block, rather than reading the files.
+
+The project marker is looked up from the working directory **upwards**, so one in
+a parent covers its subtrees; verified not to leak into a sibling project.
+**Commit it** — it is a recorded decision with its reason, not local noise.
+
+⚠️ Prefer the one-command form over a permanent marker for a one-off need. A
+marker left behind for a single occasion is how guards quietly disappear.
 
 Cost: **0 tokens** while nothing is blocked; about **150** in the one turn where
 it fires.

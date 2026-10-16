@@ -34,7 +34,12 @@ try: print(json.load(sys.stdin).get("cwd",""))
 except Exception: print("")' 2>/dev/null)
 [ -n "$RACINE" ] || RACINE=$PWD
 
-# Opt-out, checked at every level up from here: a marker in a parent project counts.
+# THREE WAYS TO TURN IT OFF, narrowest first. See the /guard command.
+#   1. one command   : DESTRUCTIVE_GUARD=off <command>
+#   2. one project    : .claude/destructive-guard.off   (looked up upwards)
+#   3. everywhere     : ~/.claude/destructive-guard.off
+case "${DESTRUCTIVE_GUARD:-}" in off|OFF|0|false|no) exit 0 ;; esac
+[ -f "$HOME/.claude/destructive-guard.off" ] && exit 0
 D=$RACINE
 while [ "$D" != "/" ] && [ -n "$D" ]; do
     [ -f "$D/.claude/destructive-guard.off" ] && exit 0
@@ -48,7 +53,8 @@ Matched: $2
 
 This command is irreversible. Ask the user to choose, do not decide for them:
   KEEP     — they run it themselves, or approve THIS exact command (not the plan)
-  DISABLE  — for this project only:  echo "<reason>" > .claude/destructive-guard.off
+  DISABLE  — run /guard off  (this project), /guard off --global, or prefix one
+             command with DESTRUCTIVE_GUARD=off
 
 Before any irreversible act: look at the target (mount read-only, list it, size
 it, say what is there), never pipe the confirmation, and put the identity guard
