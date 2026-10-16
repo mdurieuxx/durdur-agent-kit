@@ -80,6 +80,51 @@ marker left behind for a single occasion is how guards quietly disappear.
 Cost: **0 tokens** while nothing is blocked; about **150** in the one turn where
 it fires.
 
+## Token counter, on by default
+
+`/tokens` reports this project's cumulative consumption, read from the local
+transcripts under `~/.claude/projects/`. `--all` compares every project.
+
+A **SessionStart** hook prints one line when a session opens — about **28
+tokens, once**:
+
+```
+[tokens] this project: out 11.6M, cache read 3.8G, 8575 messages over 6 sessions.
+```
+
+⚠️ **SessionStart and not UserPromptSubmit, deliberately.** A counter that spends
+tokens every turn to tell you about tokens is self-defeating. Once per session is
+enough to notice a trend; the command is there for detail.
+
+### Four figures, never one total
+
+They are not priced the same: a cache read costs a fraction of a fresh input
+token, cache creation costs more than either. **A single total reads like a bill
+and is wrong.** The shape to watch is that `cache rd` dwarfs the rest by two or
+three orders of magnitude — that is context being reused rather than re-sent. A
+*falling* cache-read-to-output ratio is the signal worth reporting.
+
+### No hard-coded prices
+
+The cost column appears only if `~/.claude/token-rates.json` exists:
+
+```json
+{"input": 3.0, "output": 15.0, "cache_read": 0.3, "cache_creation": 3.75}
+```
+
+Rates are not baked into the script on purpose. **A stale rate is worse than no
+rate** — it produces a number nobody questions.
+
+### Overlap, stated honestly
+
+`token-optimizer` (third party, non-commercial licence) already ships a
+`token-dashboard`. It targets context-window *waste* and a quality score; this
+targets *cumulative consumption per project*. Different question, and no
+dependency on someone else's plugin.
+
+It counts local transcripts only — sessions run elsewhere, or transcripts cleaned
+up, are not in it. **A floor, not a bill.**
+
 ## Token economy, measured
 
 What a consuming project pays, per turn, just for having this installed:
