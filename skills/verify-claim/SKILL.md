@@ -6,7 +6,7 @@ description: Re-measure a claim before stating it, when being wrong would change
 # Verify before claiming
 
 Being wrong here is expensive in a specific way: it does not look like an error,
-it looks like good news. Twelve recorded cases are in `references/lessons.md` -- read it when a check
+it looks like good news. The recorded cases are in `references/lessons.md` -- read it when a check
 looks suspicious. Every one returned a plausible number while measuring nothing.
 
 ## The three questions

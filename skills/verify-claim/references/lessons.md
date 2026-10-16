@@ -1,6 +1,6 @@
 # Checks that cannot fail verify nothing
 
-Twelve recorded cases. Every one returned a plausible answer while measuring
+Thirteen recorded cases. Every one returned a plausible answer while measuring
 nothing, or measuring something other than what was asked. They are collected
 here because the failure shape repeats, and because reading them is cheaper than
 re-living them.
@@ -285,3 +285,35 @@ down the wrong branch.
 **The habit that catches all of them:** before trusting a scan that reports
 "nothing found", run it against a **witness** you built to be found. If the
 witness is not detected, the scan proves nothing.
+
+---
+
+## 13. A guard tested only on synthetic input
+
+The destructive-command guard passed a 74-case test written by its author. Run
+as an installed plugin in a real session, it refused `wipefs /dev/null`, a
+read-only listing.
+
+It matched **words anywhere in the command line**. Replayed over one session's
+300 real commands, it would have blocked **26** — of which about four were
+genuinely destructive. The other twenty-odd were commit messages, heredocs and
+greps that merely *named* the tools while documenting them: most of what writing
+this very kit involved. A guard that obstructs normal work gets switched off
+wholesale, and then protects nothing.
+
+The same replay exposed three holes in the other direction: `git push -f` with
+nothing after it passed (the pattern wanted a trailing space), `mkswap` was not
+covered, and `printf CONFIRM |` slipped past a rule written for `echo`.
+
+**Fix:** decide on what is *executed*, in command position, and let the read-only
+forms through — a parser, not a substring match.
+
+**The habit that catches it:** before trusting a guard, **replay your own real
+history through it**. Synthetic cases are written by the person who already
+knows what the guard does, so they confirm the design; real commands contradict
+it. Keep both lists, blocked and allowed — a guard tested only on what it must
+block drifts toward blocking everything.
+
+And when a case fails, decide **which side is wrong** before touching either.
+One of the failures here was the *test* (`yes | head`, listed as allowed on a
+guess); rewriting the code to satisfy it would have been the mistake.

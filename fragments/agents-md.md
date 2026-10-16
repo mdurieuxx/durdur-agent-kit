@@ -70,7 +70,7 @@ Procedure: `machine-first`.
 Prove a check can fail — run it against a witness built to be found — before
 trusting a reassuring answer.
 
-Procedure and twelve recorded cases: `verify-claim`.
+Procedure and the recorded cases: `verify-claim`.
 
 ---
 

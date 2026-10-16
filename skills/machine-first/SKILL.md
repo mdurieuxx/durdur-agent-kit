@@ -52,5 +52,5 @@ A command that measures nothing returns a clean-looking answer — worse than
 loading the file, because nobody looks again.
 
 **So prove the command can fail**: run it against a witness built to be found.
-Twelve recorded cases in `verify-claim`, including three of the same `grep -c`
+The recorded cases in `verify-claim` include three of the same `grep -c`
 mistake in one session.

@@ -8,15 +8,29 @@ Installed once as a plugin, updated with one command, versioned here.
 
 ## Install
 
+**Never at user scope for a trial.** A plugin installs at user scope by default,
+which enables it in every session on the machine — including ones whose job is
+to run the very commands the destructive guard blocks. Try it in one project:
+
 ```sh
-/plugin marketplace add mdurieuxx/durdur-agent-kit
-/plugin install house-rules@durdur-agent-kit
+claude plugin marketplace add mdurieuxx/durdur-agent-kit --scope local
+claude plugin install house-rules@durdur-agent-kit --scope local
+claude plugin details house-rules@durdur-agent-kit     # inventory + projected cost
+sh scripts/install-git-hooks.sh                        # the commit hooks, see below
 ```
 
-⚠️ **Unverified against a private repository.** This repo is private; whether a
-marketplace install authenticates against it has not been tested. Test it before
-relying on it, and fall back to a public repo or a local marketplace path if it
-does not.
+Verified end to end in a throwaway project: the marketplace and plugin declared
+in that project's settings only, the user-level settings untouched.
+
+**Private repository: the clone authenticates** (HTTPS, no prompt, with the
+`gh` credentials already on the machine). What was *not* run is the full
+`marketplace add` against GitHub, because a marketplace is registered under its
+name in one global registry — adding a GitHub source named `durdur-agent-kit`
+would overwrite a local-folder source of the same name.
+
+⚠️ **An install from GitHub fetches `main`, and `main` is still the skeleton**
+(10 files: one placeholder per folder). All the work is on `develop`. Merge only
+after the content review, and bump the version with it.
 
 ### What lives here, and what does not
 
@@ -199,22 +213,23 @@ up, are not in it. **A floor, not a bill.**
 
 ## Token economy, measured
 
-What a consuming project pays, per turn, just for having this installed:
+What a consuming project pays just for having this installed. **Read from
+`claude plugin details`, not estimated**: an earlier version of this table
+counted only the description line (about 667 tokens for the whole kit) and
+missed the per-entry overhead — the tool's own figure is **~884**.
 
 | | Idle cost |
 | --- | --- |
-| a **hook** | **0** — it runs outside the context |
-| an **agent** | **0** until it is spawned |
-| a **skill** | **~40 tokens** — its description only, for routing |
-| a skill's **body** | 800–2500 tokens, **only when invoked** |
+| a **hook** | **0** — runs outside the context |
+| an **agent** | **0** until spawned |
+| a **skill or command** | **~40–90 tokens**, its listing entry, for routing |
+| a skill's **body** | ~430–1600 tokens, **only when invoked** |
 | an always-on **rule** | its full weight, **every turn** |
 
-Measured across every installed plugin (18 skills): descriptions run
-106–203 characters, so **26–50 tokens each**; bodies run 3.3–10 KB and cost
-nothing until used.
-
-⚠️ An earlier version of this line said 144–204. That came from measuring one
-plugin's five skills and generalising — the kind of inference case 12 is about.
+Per component, as the tool reports it: `verify-claim` ~90, `modular-design`,
+`readable-code`, `machine-first` ~80, `kit-contribution` ~70, down to `guard`
+~40. The long descriptions are the ones costing most, which is where compression
+pays.
 
 **Design order, cheapest first: hook → agent → skill → never an always-on rule
 here.** Ten well-described skills cost about 400 tokens of standing overhead

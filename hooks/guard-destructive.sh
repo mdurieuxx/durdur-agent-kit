@@ -64,44 +64,17 @@ TXT
     exit 2
 }
 
-# Auto-fed confirmations: the exact mistake that cost a disk.
-case "$CMD" in
-  *"yes |"*|*"yes|"*)  refuser "a confirmation is being piped in" "yes |" ;;
-  *echo*CONFIRM*\|*|*echo*EFFACER*\|*|*echo*DELETE*\|*)
-                       refuser "a confirmation is being piped in" "echo ... |" ;;
-esac
-
-# Irreversible writes to block devices and partition tables.
-for m in wipefs mkfs sgdisk sfdisk "parted " blkdiscard "shred "; do
-  case "$CMD" in *"$m"*) refuser "irreversible write to a block device" "$m" ;; esac
-done
-
-# dd and tee onto a device. Operands come in ANY ORDER, so matching the literal
-# "dd of=/dev/" misses "dd if=/dev/zero of=/dev/sdz" -- which is exactly how this
-# guard let a disk-destroying command through on its first test (lesson 11).
-case "$CMD" in *"dd "*)
-  case "$CMD" in *"of=/dev/"*) refuser "dd writing to a block device" "dd ... of=/dev/" ;; esac ;;
-esac
-case "$CMD" in
-  *"tee /dev/sd"*|*"tee /dev/nvme"*|*"tee /dev/vd"*|*"> /dev/sd"*|*"> /dev/nvme"*)
-      refuser "writing straight onto a block device" "> /dev/..." ;;
-esac
-
-# Destructive git and container operations.
-case "$CMD" in
-  *"push --force"*|*"push -f "*)  refuser "force-push rewrites published history" "push --force" ;;
-  *"git clean -"*[fdx]*)          refuser "git clean removes untracked work" "git clean" ;;
-  *"docker system prune"*|*"docker volume prune"*|*"docker volume rm"*)
-      refuser "several agents may share this Docker; an orphan volume can be a stopped stack's data" "docker prune/rm" ;;
-esac
-
-# rm -rf on an absolute path, outside the obvious scratch areas.
-case "$CMD" in
-  *"rm -rf /"*|*"rm -fr /"*|*"rm -r -f /"*)
-      case "$CMD" in
-        *"rm -rf /tmp/"*|*"rm -rf /var/tmp/"*) : ;;
-        *) refuser "recursive delete on an absolute path" "rm -rf /" ;;
-      esac ;;
-esac
-
+# What counts as destructive is decided by guard-classify.py, on what is EXECUTED
+# in command position -- not on which words appear. The first version matched
+# words anywhere, and refused `wipefs /dev/null` plus every commit message,
+# heredoc and grep that merely named these tools.
+VERDICT=$(printf '%s' "$CMD" | python3 "$(dirname "$0")/guard-classify.py" 2>/dev/null)
+STATUS=$?
+if [ "$STATUS" = 2 ]; then
+    refuser "${VERDICT%%$'\t'*}" "${VERDICT#*$'\t'}"
+elif [ "$STATUS" != 0 ]; then
+    # Fail open, but VISIBLY: a guard that silently stops guarding is worse than none.
+    echo "destructive-guard: classifier failed (status $STATUS) -- command NOT checked" >&2
+    exit 1
+fi
 exit 0
