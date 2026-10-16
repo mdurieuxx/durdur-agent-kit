@@ -78,3 +78,35 @@ would matter most, and asserts on **content** — never on a status code alone.
 
 Not done until it has run. A deploy whose integration tests have not run is a
 deploy nobody can vouch for.
+
+---
+
+## Work on the machine, not in the context
+
+> **A replayable action is a script, not a transcript.**
+>
+> **Compute on the machine; bring back the answer, not the data.**
+
+Two halves of one rule, and both save the same thing: a transcript cannot be
+re-run, and data loaded into the context is paid for on every turn that follows.
+
+**The first half.** Any action that may be needed twice — setup, a migration, a
+copy, a check — goes into an idempotent script, with the command that proves it
+worked. A sequence narrated in a conversation is lost the moment the context is
+cleared, and it was never verifiable anyway.
+
+**The second half, with the numbers.** Loading a file to answer a question about
+it is almost always the expensive way:
+
+| Question | On the machine | If loaded instead |
+| --- | --- | --- |
+| one error in a 1.6 MB log | `tr '\r' '\n' \| grep -i error` → 1 line | ~400 000 tokens |
+| consumption across 21 session transcripts | a script → 15 lines | millions |
+| which of 2 repositories contain French | a loop → 2 lines | every file |
+
+So: grep, awk, `find`, `du`, a short script — then read the result. **Never page
+a large file into the context to look for something a command can find.**
+
+⚠️ **And the trap this creates.** A command that measures nothing returns a
+clean-looking answer, which is worse than loading the file. Prove the command can
+fail: run it against a witness built to be found. See `verify-claim`.
