@@ -88,3 +88,43 @@ Prove a check can fail — run it against a witness built to be found — before
 trusting a reassuring answer.
 
 Procedure and twelve recorded cases: `verify-claim`.
+
+---
+
+## Secrets
+
+> **A secret value is never versioned. The reference is versioned; the value is
+> not.**
+>
+> **Verified at startup, masked on display.**
+
+Origin: a missing secret broke a deployment **three times in one session**, and a
+database password is versioned in clear in an infrastructure repository to this
+day. `.gitignore` does **not** act on an already-tracked file — a value committed
+once must be **revoked**, not merely ignored.
+
+Enforced by `no-literal-secret`.
+
+## Authorisation
+
+> **Fail-closed, and ownership lives in the model — not in a review habit.**
+
+Origin: a **critical IDOR across 14 routers**, every one reading an identifier
+from the request and trusting it. The mechanism is structural: ownership
+expressed in the model, one central guard, and a default that denies.
+
+⚠️ **A presentation field is not a mechanism.** A hidden button is not an
+authorisation.
+
+Procedure: `threat-check`.
+
+## The input boundary
+
+> **Never interpolate a parsed value into a query, a template, a shell command
+> or a path.**
+
+Anything read from a third party is the highest-value target and the component
+least likely to be watched. Parameterise, or reject.
+
+⚠️ **Bound everything that comes from outside** — size, count, depth, rate. An
+unbounded input is a denial of service waiting to be discovered.

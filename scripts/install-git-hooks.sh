@@ -37,7 +37,7 @@ poser() {
     echo "  wired   $nom -> $*"
 }
 
-poser pre-commit enforce-feature-branch.sh english-only.sh no-assistant-in-code.sh
+poser pre-commit enforce-feature-branch.sh english-only.sh no-assistant-in-code.sh no-literal-secret.sh
 poser commit-msg no-assistant-attribution.sh tdd-test-parity.sh spec-before-code.sh
 
 echo

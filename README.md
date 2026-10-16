@@ -69,6 +69,20 @@ A plugin cannot carry an always-on rule (`rules` 0 of 315 official plugins), so
 code names its spec (`Spec: <path>`), stages it, or carries a traced
 `SPEC-EXEMPT: <reason>`. Verified on five cases including the two that must pass.
 
+## On SOLID, deliberately absent
+
+SOLID is not in this kit, and that is a decision rather than an omission. Named
+principles are the textbook case of what the kit refuses: **generic advice**,
+true everywhere and checkable nowhere.
+
+What earns a place is the **consequence** that cost something, stated so a hook
+or a test can catch it. One real example, from the project this kit was drawn
+from: *"no module reads the clock"* — that **is** dependency inversion, but as a
+rule you can enforce. *"Depend on abstractions"* is not.
+
+So if a design failure costs real time: write the consequence, with its
+incident. Not the principle it illustrates.
+
 ## Layout
 
 ```
