@@ -366,6 +366,15 @@ GitOps follows `develop` while `main` holds what is released.
 **changes behaviour in every project that installed the plugin**. Merge
 deliberately, and bump the version in `.claude-plugin/plugin.json`.
 
+## Every fix goes through a GitHub issue
+
+Open an issue first (template: *Fix or finding*): what went wrong, where it was
+found, and the proof of the fix. The commit then cites it (`Fixes #12`), and the
+test that fails before and passes after lives in `tests/`.
+
+Enforced locally by `.githooks/commit-msg`, which refuses a `fix…` commit that
+cites no issue. Enable it once per clone: `git config core.hooksPath .githooks`.
+
 ## The one rule about this repository
 
 **Every project either contributes a rule, a skill, an agent or a lesson here, or
