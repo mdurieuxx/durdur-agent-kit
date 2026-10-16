@@ -163,6 +163,32 @@ reported "3 trailers remain" after a rewrite that had worked: the check counted
 script announced its own failure rather than a success, and the fault was the
 measurement.
 
+## Ownership: nothing is committed on a repository that is not yours
+
+The user's rule, absolute: no commit, push, merge, tag, pull request or issue on a
+repository that does not belong to them. **"Belongs" is measured from the remote's
+owner, never guessed**, because the case that prompted it was a repository assumed to be
+theirs that sat under another person's account, on which they merely had WRITE. Write
+access is not ownership.
+
+`no-foreign-commit` reads the owner of the repository the command *acts on* — which is
+rarely the working directory alone: `cd other && git commit`, `git -C other commit`,
+`git push <url>`, `git push upstream` and `gh pr create -R owner/name` each name another
+place. Reading is never refused: fetching, cloning, logging and listing someone else's
+repository change nothing of theirs. A repository with no remote is nobody else's.
+
+The list is `~/.claude/owned-owners`, seeded once from GitHub: the account, and the
+organisations where the user is **admin** (a member-only organisation is listed as a
+comment, off). **The agent must never edit it to get past a block** — that is exactly
+the act the rule forbids — and the block message says so. There is no environment
+opt-out either: a variable is one `export` from being used to get past the rule.
+
+Verified three ways: 61 cases in `tests/test_ownership.py` against real temporary
+repositories (own account, an organisation, a third party, none, a local path, a fork
+with a foreign `upstream`); a replay of 300 real commands, 30 of which write, with 0
+blocked; and a live session in a repository whose remote is a third party's, which was
+refused, created no commit and left the list untouched.
+
 ## Findings feed the kit
 
 `.claude/kit-candidates.md` in each project: one line per finding made while

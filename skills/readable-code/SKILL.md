@@ -20,6 +20,7 @@ Not style — these each cost real time:
 | `case "$sz" in 1,8T)` | never matched: the formatted size carried a leading space. Two guards disabled by it. |
 | `*"dd of=/dev/"*` | missed `dd if=/dev/zero of=/dev/sdz`, because operands come in any order. |
 | `awk '{print $(NF-4)}'` | broke the moment the line gained a parenthesis. |
+| `read -r CMD CWD < <(… print(cmd, cwd))` | split on whitespace, kept the first word of the command, and the guard it fed **allowed everything**. Caught only because the test existed before the hook. |
 
 **The shape:** a short form that is correct only under a condition you cannot see
 at the call site. Write the long form, or make the condition explicit.

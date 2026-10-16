@@ -14,5 +14,7 @@
 #
 # Silent on failure: a hook that informs must never be why a session fails to start.
 set -uo pipefail
+# Seed the ownership list once, from what GitHub says. Quiet, and never overwrites.
+[ -e "$HOME/.claude/owned-owners" ] || "$(dirname "$0")/../scripts/seed-owned-owners.sh" >/dev/null 2>&1 || true
 cat "$(dirname "$0")/session-rules.txt" 2>/dev/null || true
 exit 0
