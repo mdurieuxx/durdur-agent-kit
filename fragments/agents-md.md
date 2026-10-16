@@ -128,3 +128,22 @@ least likely to be watched. Parameterise, or reject.
 
 ⚠️ **Bound everything that comes from outside** — size, count, depth, rate. An
 unbounded input is a denial of service waiting to be discovered.
+
+---
+
+## Readable over clever
+
+> **Ten descriptive lines beat one line nobody can read.**
+>
+> **Code says what it does; a comment says why it exists.**
+
+Terseness that depends on an invisible precondition is the most expensive kind.
+Measured here: `grep -c X f || echo 0` reads as a safe default and returns
+`0\n0`, because `grep -c` already prints `0` before exiting `1`. It silently
+broke every comparison after it — **three times in one session**.
+
+A comment restating the code is noise. A comment carrying the incident that
+produced the line is often the most valuable line in the file, and the first one
+a later reader needs.
+
+Procedure: `readable-code`.
