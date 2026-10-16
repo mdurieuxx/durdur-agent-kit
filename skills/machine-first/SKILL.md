@@ -51,7 +51,6 @@ the conversation is not.
 A command that measures nothing returns a clean-looking answer — worse than
 loading the file, because nobody looks again.
 
-**So prove the command can fail.** Run it against a witness built to be found; if
-the witness is not detected, the command proves nothing. `verify-claim` has
-twelve recorded cases of exactly this, including three of the same `grep -c`
+**So prove the command can fail**: run it against a witness built to be found.
+Twelve recorded cases in `verify-claim`, including three of the same `grep -c`
 mistake in one session.

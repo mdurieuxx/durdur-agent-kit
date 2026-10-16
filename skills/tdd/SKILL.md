@@ -34,12 +34,10 @@ Unit tests prove a function; they cannot prove that two components agree.
 boundary, a network call, a queue, a database, a third-party API. That is where
 the failures live, and where unit tests are structurally blind.
 
-Two shapes paid for already:
-
-- four applications answered `200` on their health endpoints while every
-  registration returned 500 — a component between two of them was not running;
-- a guard was verified by checking that a table existed, on a dump where the
-  column that mattered was empty on every row.
+Two shapes paid for already: four applications green on their health endpoints
+while every registration failed (`post-deploy-check`), and a guard verified by
+checking a table existed, on a dump whose relevant column was empty on every
+row.
 
 So an integration test **writes and reads back**, crosses every boundary the
 real request crosses, and asserts on **a value** — never on a status code, never

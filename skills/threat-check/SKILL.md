@@ -27,15 +27,15 @@ pull request description.
 | Missing authorisation | a **critical IDOR across 14 routers** | ownership in the model, central guard, fail-closed |
 | Secret missing at deploy | three times in one session | versioned reference + startup verification |
 | Secret versioned in clear | found still true in an infrastructure repository | a hook that refuses a literal |
-| Green-by-accident test | equality on an unneutralised environment variable | reading the real environment in a test is forbidden |
+| Green-by-accident test | see `tdd` | reading the real environment in a test is forbidden |
 
 ## Two false comforts
 
 - **A presentation field is not a mechanism.** A hidden button is not an
   authorisation.
-- **A green is only worth what it proves.** Health is verified by a probe that
-  queries real state, never by the absence of an error — and for a data feed, on
-  **content**, never on connectivity.
+- **A green is only worth what it proves** (`tdd`). Health is verified by a
+  probe that queries real state, never by the absence of an error — and for a
+  data feed, on **content**, never on connectivity.
 
 ## What is deliberately out of scope
 
