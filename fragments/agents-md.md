@@ -1,8 +1,7 @@
 # AGENTS.md fragments
 
-Always-on rules cannot ship in a plugin (`rules`: 0 of the 315 official
-plugins), so they live here as sections to **copy** into a project's own
-`AGENTS.md`.
+Sections to **copy** into a project's own `AGENTS.md`. Each one is the
+obligation, one line of why, and where the procedure lives.
 
 | --- |
 | Could a hook catch it? | make it a hook — 0 tokens, and mechanical enforcement is not read, it is obeyed |
@@ -91,11 +90,10 @@ Enforced by `no-literal-secret`.
 
 > **Fail-closed, and ownership lives in the model — not in a review habit.**
 
-A **critical IDOR across 14 routers**, every one trusting an identifier read
-from the request. The mechanism is structural, not a review habit: ownership in
-the model, one central guard, a default that denies.
+The mechanism is structural, not a review habit: ownership in the model, one
+central guard, a default that denies.
 
-Procedure, and the false comforts to avoid: `threat-check`.
+Procedure, the classes already paid for, and the false comforts: `threat-check`.
 
 ## The input boundary
 
@@ -129,9 +127,8 @@ Procedure, with six questions and the measurement that settles an argument:
 > **Code says what it does; a comment says why it exists.**
 
 Terseness correct only under a condition invisible at the call site is the
-expensive kind: `grep -c X f || echo 0` returns `0\n0` and broke every later
-comparison, three times in one session. A comment restating the code is noise;
-one carrying the incident is usually the most valuable line in the file.
+expensive kind. A comment restating the code is noise; one carrying the incident
+is usually the most valuable line in the file.
 
 Procedure, with five such lines and what each cost: `readable-code`.
 

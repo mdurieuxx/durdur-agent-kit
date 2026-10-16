@@ -15,7 +15,7 @@ Not style — these each cost real time:
 
 | The clever line | What it actually did |
 | --- | --- |
-| `n=$(grep -c X f \|\| echo 0)` | `grep -c` **already prints 0** then exits 1, so `n` became `0\n0` and every comparison after it died or was skipped. **Three times in one session.** |
+| `n=$(grep -c X f \|\| echo 0)` | `grep -c` **already prints 0** then exits 1, so `n` became `0\n0` and every comparison after it died or was skipped. **Three times in one session** — `verify-claim` case 12. |
 | `r="${f/old/new}"` | empty string under a non-bash shell — then every file reported missing. The data was fine; the line was not. |
 | `case "$sz" in 1,8T)` | never matched: the formatted size carried a leading space. Two guards disabled by it. |
 | `*"dd of=/dev/"*` | missed `dd if=/dev/zero of=/dev/sdz`, because operands come in any order. |

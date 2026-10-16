@@ -17,15 +17,15 @@ pull request description.
    not *insufficient security*.
 3. **What makes it structurally impossible?** Ownership in the model, a central
    guard, a bound, a parameterised query. **Not vigilance.**
-4. **Which test proves it?** A test that fails if the guard is removed. **If
-   removing the guard keeps the suite green, the guard is not tested.**
+4. **Which test proves it?** One that fails if the guard is removed — the
+   general form is in `tdd`.
 
 ## Classes already paid for
 
 | Class | What it cost | The mechanism |
 |---|---|---|
 | Missing authorisation | a **critical IDOR across 14 routers** | ownership in the model, central guard, fail-closed |
-| Secret missing at deploy | three times in one session | versioned reference + startup verification |
+| Secret missing at deploy | broke a deploy three times in one session | versioned reference + startup verification |
 | Secret versioned in clear | found still true in an infrastructure repository | a hook that refuses a literal |
 | Green-by-accident test | see `tdd` | reading the real environment in a test is forbidden |
 
