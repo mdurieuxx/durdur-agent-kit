@@ -148,6 +148,21 @@ Injection is a deliberate exception to "no always-on rule from a plugin", so it 
 kept short (~90 tokens, which stay in the context for the session) and reserved
 for judgment no hook can check, and for rules the harness's defaults contradict.
 
+### History that already leaked
+
+`scripts/strip-attribution.sh <repository>` produces a copy of a repository whose
+history carries no attribution trailer. It is **safe by construction**: it works on
+a clone, writes a bundle of the original first, never pushes, and proves the
+rewrite touched messages only — every branch tip must keep the same file tree and
+commit count. It prints the push command; running it is the repository owner's
+decision, because a force-push is irreversible for anyone who already pulled.
+
+Its first run was a test against a throwaway repository with known answers. It
+reported "3 trailers remain" after a rewrite that had worked: the check counted
+`refs/original/`, the copies `filter-branch` keeps of what it just rewrote. The
+script announced its own failure rather than a success, and the fault was the
+measurement.
+
 ## Findings feed the kit
 
 `.claude/kit-candidates.md` in each project: one line per finding made while
