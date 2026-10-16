@@ -41,6 +41,38 @@ hooks/*.sh                        mechanical enforcement
 commands/                         slash commands
 ```
 
+## The destructive guard: on by default, switchable per project
+
+`hooks/guard-destructive.sh` is a **hook**, so it applies in every project the
+moment the plugin is enabled — no opt-in. That is deliberate: the one time it
+matters is the time nobody expected it.
+
+It blocks piped confirmations, irreversible block-device writes, force-pushes,
+Docker prunes and recursive deletes on absolute paths, while letting the
+legitimate forms through (`dd if=/dev/sda of=image.img` reads a disk into a file
+and passes).
+
+**Some projects do this work for a living.** A NAS admin session legitimately
+runs `wipefs`, `mkfs` and `docker prune`; three such commands were needed to
+format the external disk that made a Synology recovery possible. A guard that
+obstructs normal work gets switched off wholesale, and then protects nothing.
+
+So when it fires, the agent **offers the choice** rather than deciding:
+
+```
+KEEP     — the user runs it themselves, or approves THIS exact command
+DISABLE  — for this project only:
+           echo "<reason>" > .claude/destructive-guard.off
+```
+
+The marker is looked up from the working directory **upwards**, so one in a
+parent project covers its subtrees. Verified: a marker in one project does not
+leak into another. **Commit it** — it is a recorded decision with its reason, not
+local noise.
+
+Cost: **0 tokens** while nothing is blocked; about **150** in the one turn where
+it fires.
+
 ## Token economy, measured
 
 What a consuming project pays, per turn, just for having this installed:
