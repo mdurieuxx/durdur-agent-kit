@@ -52,24 +52,53 @@ echo "trailers          : $before -> $after"
 echo "original bundle   : $BUNDLE"
 echo "rewritten copy    : $COPY"
 
-echo "branch tips (same file tree, count of commits):"
+# What is published, branch by branch. A rewrite may only be pushed over a branch whose
+# remote tip IS the commit this copy was made from; anything else would publish a private
+# branch, or move a remote branch backwards and drop commits this copy never saw.
+declare -A REMOTE_TIP
+URL=$(git -C "$SRC" remote get-url origin 2>/dev/null || true)
+if [ -n "$URL" ]; then
+    while read -r sha ref; do REMOTE_TIP["${ref#refs/heads/}"]=$sha; done \
+        < <(git -C "$SRC" ls-remote --heads origin 2>/dev/null || true)
+fi
+
+echo "branches (file tree, commits, and whether the rewrite may be published):"
 status=0
+PUSHES=()
 for branch in $(git -C "$COPY" for-each-ref --format='%(refname:short)' refs/heads/); do
     git -C "$SRC" rev-parse -q --verify "refs/heads/$branch" >/dev/null || continue
+    old_tip=$(git -C "$SRC" rev-parse "refs/heads/$branch")
     old_tree=$(git -C "$SRC" rev-parse "refs/heads/$branch^{tree}")
     new_tree=$(git -C "$COPY" rev-parse "refs/heads/$branch^{tree}")
     old_n=$(git -C "$SRC" rev-list --count "refs/heads/$branch")
     new_n=$(git -C "$COPY" rev-list --count "refs/heads/$branch")
-    if [ "$old_tree" = "$new_tree" ] && [ "$old_n" = "$new_n" ]; then verdict=ok; else verdict="DIFFERS"; status=1; fi
-    printf '  %-28s %-8s %s commits\n' "$branch" "$verdict" "$new_n"
+    if [ "$old_tree" = "$new_tree" ] && [ "$old_n" = "$new_n" ]; then verdict=ok; else verdict=DIFFERS; status=1; fi
+    if [ -z "${REMOTE_TIP[$branch]:-}" ]; then
+        publish="local only -- never published, keep it private"
+    elif [ "${REMOTE_TIP[$branch]}" = "$old_tip" ]; then
+        publish="publishable (remote tip matches this copy)"
+        PUSHES+=("git -C $COPY push --force-with-lease=$branch:${REMOTE_TIP[$branch]} $URL refs/heads/$branch:refs/heads/$branch")
+    else
+        publish="DIVERGED from remote -- do not push: it would drop or rewrite commits this copy never saw"
+    fi
+    printf '  %-26s %-8s %5s commits   %s\n' "$branch" "$verdict" "$new_n" "$publish"
 done
 [ "$after" = 0 ] || { echo "WARNING: $after trailer(s) remain"; status=1; }
 empty=$(git -C "$COPY" log --branches --tags --format=%s | grep -c '^$' || true)
 [ "$empty" = 0 ] || { echo "WARNING: $empty commit message(s) became empty"; status=1; }
 
+tags=$(git -C "$SRC" ls-remote --tags origin 2>/dev/null | grep -vc '\^{}' || true)
+[ "${tags:-0}" = 0 ] || echo "NOTE: $tags tag(s) on the remote point at old commits and are NOT handled here."
+
 echo
-echo "To publish -- the owner's decision, and irreversible for anyone who already pulled:"
-echo "  cd $COPY && git push --force-with-lease --all \"\$(git -C $SRC remote get-url origin)\""
-echo "  cd $COPY && git push --force --tags \"\$(git -C $SRC remote get-url origin)\"   # rewritten tags too"
+if [ "${#PUSHES[@]}" -gt 0 ]; then
+    echo "To publish -- the owner's decision, irreversible for anyone who already pulled."
+    echo "One command per publishable branch, each leased on the remote tip read just now:"
+    printf '  %s\n' "${PUSHES[@]}"
+else
+    echo "Nothing to publish: no branch is both rewritten and in sync with its remote."
+fi
+echo "Then, in every clone: move the local branch refs (git update-ref <ref> <new> <old>) rather than pulling --"
+echo "a pull would merge the old and the new history and bring the trailers back."
 echo "To go back:  git clone $BUNDLE restored"
 exit $status
