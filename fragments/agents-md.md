@@ -53,3 +53,28 @@ Enforced by `spec-before-code`. Deliberate exception, traced in the message:
 **Why an obligation rather than a habit.** Code written before its spec defines
 its own success criteria, so it is always correct and never checkable. The spec
 is what makes "done" falsifiable.
+
+---
+
+## Integration tests after a deploy
+
+> **After a deploy, integration tests run against the deployed instance — never
+> the local one.**
+
+A green test suite on a developer machine, or a green CI job on a branch, proves
+nothing about what is actually running. Only a transaction executed against the
+deployed instance does.
+
+**And a connectivity check is not an integration test.** Paid for twice:
+
+- four applications answered `200` on their health endpoints while **every
+  registration returned 500** — a gateway between two of them was not running,
+  and nothing that only checked reachability could see it;
+- a port was open and a service reported healthy while the component behind it
+  had never started.
+
+So the test exercises **one real transaction end to end**, the one whose failure
+would matter most, and asserts on **content** — never on a status code alone.
+
+Not done until it has run. A deploy whose integration tests have not run is a
+deploy nobody can vouch for.
