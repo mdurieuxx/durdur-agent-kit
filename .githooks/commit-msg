@@ -1,0 +1,7 @@
+#!/bin/sh
+# A fix to this kit goes through a GitHub issue: a `fix` commit must cite one (#123).
+# Enable once per clone:  git config core.hooksPath .githooks
+subject=$(head -1 "$1")
+case "$subject" in
+    fix*|Fix*) grep -qE '#[0-9]+' "$1" || { echo "commit-msg: a fix must reference its issue (#123)" >&2; exit 1; } ;;
+esac

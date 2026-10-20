@@ -1,6 +1,6 @@
 # Checks that cannot fail verify nothing
 
-Ten recorded cases. Every one returned a plausible answer while measuring
+Fifteen recorded cases. Every one returned a plausible answer while measuring
 nothing, or measuring something other than what was asked. They are collected
 here because the failure shape repeats, and because reading them is cheaper than
 re-living them.
@@ -118,8 +118,18 @@ r=$(echo "$f" | sed 's#^/old/prefix#/new/prefix#')
 ## 7. A guard that checked the table, not the column
 
 A database backup guard verified `CREATE TABLE public.participant_accounts` was
-present. It passed every night — including on a dump where **533 accounts had no
-credential at all**, because the schema had changed and the column moved.
+present. It passed every night — and on the night it mattered it passed a dump
+whose 533 accounts had **`password_hash` empty on every row**.
+
+⚠️ **And the first reading of that was wrong too.** The conclusion drawn was
+"533 accounts with no credential", which would have been a disaster. The
+credentials had simply **moved column**: a schema change had added `code_key` and
+`code_sealed`, and all 533 rows carried both. Nothing was lost.
+
+So there were two failures stacked. The guard could not tell a credential-bearing
+dump from a credential-less one — a real defect. And the human reading of its
+silence invented a loss that had not happened — the worse of the two, because it
+nearly triggered a restore over good data.
 
 **Fix:** count what matters, and resolve column positions from the header so a
 schema change cannot silently invalidate the guard.
@@ -238,3 +248,124 @@ then it protects nothing.
 *or a tired operator* could reorder, abbreviate or space differently — then test
 each form. This hole existed for four minutes because the guard was tested
 immediately. Untested, it would have read as protection for months.
+
+---
+
+## 12. `grep -c` with a fallback that adds a second number
+
+Made **three times in a single session**, which is why it gets its own entry
+rather than hiding inside case 8.
+
+```sh
+n=$(grep -c PATTERN "$f" 2>/dev/null || echo 0)
+[ "$n" -gt 2 ] && echo "found"
+```
+
+`grep -c` **already prints `0`** when it matches nothing — and exits `1`. So the
+`|| echo 0` appends a second zero, `$n` becomes `0\n0`, and every comparison
+dies with *integer expression expected*. Under `set -e` the script stops; without
+it, the test is skipped and **the loop reports a clean result having evaluated
+nothing**.
+
+The first time, it declared two repositories free of French without checking a
+single file. The second, it printed a coupling table whose verdict column was
+wrong throughout.
+
+**Fix:** `grep -c` needs no fallback at all, only permission to exit non-zero.
+
+```sh
+n=$(grep -c PATTERN "$f" 2>/dev/null) || true
+n=${n:-0}
+```
+
+And the same trap wears other clothes: `echo -` prints an empty line in zsh, not
+a dash — which silently emptied a variable in the same table and sent whole rows
+down the wrong branch.
+
+**The habit that catches all of them:** before trusting a scan that reports
+"nothing found", run it against a **witness** you built to be found. If the
+witness is not detected, the scan proves nothing.
+
+---
+
+## 13. A guard tested only on synthetic input
+
+The destructive-command guard passed a 74-case test written by its author. Run
+as an installed plugin in a real session, it refused `wipefs /dev/null`, a
+read-only listing.
+
+It matched **words anywhere in the command line**. Replayed over one session's
+300 real commands, it would have blocked **26** — of which about four were
+genuinely destructive. The other twenty-odd were commit messages, heredocs and
+greps that merely *named* the tools while documenting them: most of what writing
+this very kit involved. A guard that obstructs normal work gets switched off
+wholesale, and then protects nothing.
+
+The same replay exposed three holes in the other direction: `git push -f` with
+nothing after it passed (the pattern wanted a trailing space), `mkswap` was not
+covered, and `printf CONFIRM |` slipped past a rule written for `echo`.
+
+**Fix:** decide on what is *executed*, in command position, and let the read-only
+forms through — a parser, not a substring match.
+
+**The habit that catches it:** before trusting a guard, **replay your own real
+history through it**. Synthetic cases are written by the person who already
+knows what the guard does, so they confirm the design; real commands contradict
+it. Keep both lists, blocked and allowed — a guard tested only on what it must
+block drifts toward blocking everything.
+
+And when a case fails, decide **which side is wrong** before touching either.
+One of the failures here was the *test* (`yes | head`, listed as allowed on a
+guess); rewriting the code to satisfy it would have been the mistake.
+
+---
+
+## 14. A rule that depends on being remembered
+
+The rule "nothing published credits the tool that wrote it" lived in a memory
+file and in the instructions of one project. The harness's default instruction
+says the opposite, and wins in every session that does not load the rule.
+
+Nobody noticed, because each commit looked fine. Counting did: over 14
+repositories, **108 of 867 commits carried the trailer** — 62 of 69 in one
+project, 46 of 64 in another, none in the rest. Two projects, driven by sessions
+that simply followed their defaults, and no failure anywhere to point at.
+
+**Fix, in two layers.** Inject the rule at session start, so the model does not
+attempt it. Enforce it where the text leaves, so a commit carrying it is refused
+before it exists. Verified live in a project with no commit hooks installed: the
+first session added the trailer; with the plugin, a session asked to commit as
+usual produced a clean message and quoted the rule back; one *ordered* to add it
+was blocked and created no commit.
+
+```sh
+git log --format=%B | grep -ciE 'co-authored-by:.*(claude|anthropic|copilot)'
+```
+
+**The habit:** for any rule the harness's defaults contradict, **count the leak in
+history before assuming the rule holds**. A rule stated in one place protects
+only the sessions that read that place.
+
+---
+
+## 15. An estimate that ignores the setting you changed
+
+Marking a command `disable-model-invocation: true` should remove it from what the
+model is told about on every turn. The tool's own cost report — which prints a
+per-component token estimate — did not move at all: the same 884 before and
+after. The natural conclusion is that the field does nothing.
+
+It does. Asked directly which commands it could see, a live session listed
+`guard` and `tokens` without the field and **omitted both with it**. The report
+is a static estimate that does not model the field.
+
+**Fix:** do not conclude from an estimate that a change is inert, nor that it
+worked. Ask the system for the behaviour itself.
+
+```sh
+claude -p "List the exact names of every command available to you containing 'guard'." < /dev/null
+```
+
+**The habit:** when a number does not move after a change, run the one experiment
+that observes the effect rather than the one that reports about it — and say in
+the docs which figure is the tool's estimate and which is the observed one.

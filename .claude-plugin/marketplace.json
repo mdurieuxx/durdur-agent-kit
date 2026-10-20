@@ -13,10 +13,17 @@
       "name": "house-rules",
       "source": "./",
       "description": "The rules that hold on every turn, the skills that encode repeatable procedures, and the hooks that enforce them mechanically.",
-      "version": "0.1.0",
-      "author": { "name": "Marc Durieux" },
+      "author": {
+        "name": "Marc Durieux"
+      },
       "repository": "https://github.com/mdurieuxx/durdur-agent-kit",
-      "keywords": ["rules", "skills", "hooks", "agents", "verification"]
+      "keywords": [
+        "rules",
+        "skills",
+        "hooks",
+        "agents",
+        "verification"
+      ]
     }
   ]
 }
