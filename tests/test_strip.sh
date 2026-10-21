@@ -76,6 +76,13 @@ git -C "$T/fork.git" symbolic-ref HEAD refs/heads/gone
 OUT3=$(STRIP_KEEP_URL="file://$T/up.git" STRIP_KEEP_BRANCH=main bash "$SCRIPT" "file://$T/fork.git" "$T/w3" 2>&1); RC3=$?
 check "unborn HEAD does not abort" "$RC3" "0"
 
+# 3b. a clean commit whose message has NO trailing newline (GitHub merge commits do): untouched
+git init -q -b main "$T/nonl"
+( cd "$T/nonl" && echo a > f && git add f && T1=$(git write-tree) && C1=$(printf 'no newline at the end' | git commit-tree "$T1") && git update-ref refs/heads/main "$C1" && git reset -q --hard main )
+BEFORE_SHA=$(git -C "$T/nonl" rev-parse main)
+bash "$SCRIPT" "$T/nonl" "$T/w5" >/dev/null 2>&1
+check "a message without trailing newline keeps its SHA" "$(git -C "$T/w5/nonl-clean" rev-parse main)" "$BEFORE_SHA"
+
 # 4. a history with no trailer: nothing to rewrite, nothing to push
 git init -q -b main "$T/clean"; ( cd "$T/clean" && git checkout -q -b main && commit one f )
 OUT4=$(bash "$SCRIPT" "$T/clean" "$T/w4" 2>&1); RC4=$?
