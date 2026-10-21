@@ -63,11 +63,15 @@ cat > "$FILTER" <<'PY'
 import re, sys
 CREDIT = re.compile(r'^\s*Co-Authored-By:.*(claude|anthropic|copilot|chatgpt|openai|noreply@anthropic)', re.I)
 GENERATED = re.compile(r'Generated with.*(Claude|Copilot|ChatGPT)', re.I)
-lines = [l for l in sys.stdin.read().splitlines()
-         if not (CREDIT.match(l) or GENERATED.search(l) or '🤖' in l)]
-while lines and not lines[-1].strip():
-    lines.pop()
-sys.stdout.write('\n'.join(lines) + '\n')
+raw = sys.stdin.read()
+lines = raw.splitlines()
+kept = [l for l in lines if not (CREDIT.match(l) or GENERATED.search(l) or '🤖' in l)]
+if len(kept) == len(lines):      # nothing to remove: leave the message byte for byte
+    sys.stdout.write(raw)        # (a rewrite would change every SHA from here on)
+else:
+    while kept and not kept[-1].strip():
+        kept.pop()
+    sys.stdout.write('\n'.join(kept) + '\n')
 PY
 
 # Count on branches and tags only. `--all` would also count refs/original/, the copies
