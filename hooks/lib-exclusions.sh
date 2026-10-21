@@ -7,11 +7,12 @@
 # legitimate case in one with other paths. A hard-coded list is a project
 # pretending to be a convention.
 #
-# A project adds its own, one glob per line, in .claude/hook-exclusions:
+# A project adds its own, one LITERAL path fragment per line, in .claude/hook-exclusions:
 #     i18n/
 #     docs/legacy/
 #
-# Lines starting with # are comments.
+# Each line is matched as a substring of the path. It is NOT a glob: `src/**` matches nothing, use
+# `src/`. Lines starting with # are comments.
 exclusions_regex() {
     base='(^|/)\.reference/|(^|/)vendor/|(^|/)node_modules/'
     f="${1:-.claude/hook-exclusions}"
