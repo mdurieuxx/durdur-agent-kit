@@ -1,6 +1,6 @@
 ---
 name: checkpoint
-description: Write a session checkpoint before clearing context, and decide whether to clear. Use when the context fills, the subject changes, or a session ends.
+description: Write a session checkpoint before clearing context, decide whether to clear, and propose the clear yourself with the prompt to paste after it. Use when the context fills, the subject changes, or a session ends.
 ---
 
 # Session checkpoint
@@ -78,6 +78,41 @@ Signals so far:
 
 Counter-signal: a task in flight with unwritten state in the conversation.
 Checkpoint first, then decide.
+
+## Asking for the clear
+
+**It is the agent's job to ask for the clear, never the owner's.** The skill says
+when a clear is justified; without this section nobody starts it, and the owner
+ends up asking "do you want a clear?" with the window already past 80%.
+
+1. When a signal under "When to clear" holds, **propose the clear yourself**, at
+   the end of a turn, without being asked.
+2. Before proposing, the checkpoint is written, committed and **pushed**, and the
+   tree is clean (the two commands above). Say so, with the commit id.
+3. Report three numbers, so the owner can judge the proposal rather than take it
+   on trust:
+   - **cost per message**: tokens re-read on each turn, i.e. the context size at
+     the last turn (the first turn after a clear gives the baseline);
+   - **context size**: tokens used and the fill percentage of the window;
+   - **context quality**: the token-optimizer score (e.g. `B (78/100)`), or
+     "not measured" when it is unavailable. Never invent one.
+
+   One line is enough:
+   `Context: 142k tokens (71%), quality B (78/100); one message costs ~142k tokens now vs ~64k after the clear.`
+4. Always give, with the proposal, **the prompt to paste after the clear**, in one
+   fenced block ready to copy. It names:
+   - the repository and the branch holding the checkpoint;
+   - "read `checkpoint.md`, then memory X";
+   - "first tell me the cost of a message";
+   - the next step;
+   - "without asking me questions", when that is the working mode.
+5. **Never clear by yourself.** The owner types `/clear`.
+6. Counter-signal unchanged: a task in flight with unwritten state means
+   checkpoint first, *then* propose.
+
+Witnessed: a session at 83% of the window, after several work items and a
+diagnosis, with the checkpoint already pushed. The only thing missing was the
+initiative and the resume prompt; the owner had to ask for both.
 
 ## If the checkpoint disagrees with what you observe
 
