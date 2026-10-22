@@ -41,8 +41,9 @@ poser() {
     echo "  wired   $nom -> $*"
 }
 
-poser pre-commit enforce-feature-branch.sh english-only.sh no-assistant-in-code.sh no-literal-secret.sh
-poser commit-msg no-assistant-attribution.sh tdd-test-parity.sh spec-before-code.sh
+poser pre-commit enforce-feature-branch.sh english-only.sh no-assistant-in-code.sh
+# no-literal-secret is a commit-msg hook: its SECRET-OK override lives in the message
+poser commit-msg no-literal-secret.sh no-assistant-attribution.sh tdd-test-parity.sh spec-before-code.sh
 
 echo
 echo "Project exclusions go in .claude/hook-exclusions, one literal path fragment per line."
