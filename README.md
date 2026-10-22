@@ -367,6 +367,25 @@ GitOps follows `develop` while `main` holds what is released.
 **changes behaviour in every project that installed the plugin**. Merge
 deliberately, and bump the version in `.claude-plugin/plugin.json`.
 
+## Release notes on every tag
+
+A tag without notes cannot come out of the tools. `scripts/release_notes.py <tag>`
+builds the notes from git: the commits that touched the component since its
+**previous tag by version** (merge commits and other components left out), the
+issues they fix (`Fixes #12`), and the artifact the tag names (`--artifact`). Tags are
+`<component>-vX.Y.Z`, the component being a folder at the repository root, or a plain
+`vX.Y.Z` for the whole repository. The first tag of a component says so.
+
+```sh
+scripts/tag-release.sh app-v1.4.0 registry.example/app:1.4.0   # tags, pushes, publishes the release
+scripts/release_notes.py app-v1.4.0 --publish                   # a tag that already exists
+scripts/check-release.sh app-v1.4.0                             # fails when it has no notes
+```
+
+`.github/workflows/release-notes.yml` runs the check on every pushed tag, so a plain
+`git push --tags` that skips the tool turns the build red. A build tool that pushes tags
+calls `release_notes.py --publish` right after its own push. Tests: `tests/test_release_notes.py`.
+
 ## Default model
 
 A plugin cannot set the model. `/house-rules:default-model` writes

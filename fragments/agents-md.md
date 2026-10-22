@@ -162,3 +162,15 @@ was visible work and almost no gain; the cost was architectural.
 
 So: profile, fix the layer the numbers name, and re-measure. An optimisation
 without a before-and-after number is a guess with extra steps.
+
+## Release notes
+
+> **Every release tag carries its notes, published as the tag's release.**
+
+Notes are generated from the commits that touched the tagged component since its
+previous tag, never written after the fact: a hand step after tagging is the one
+that gets skipped. Measured on a real project: 18 tags, no release, and what an
+image contained was only readable from `git log`.
+
+Tool: `scripts/tag-release.sh` (tags, pushes, publishes). Checked by
+`scripts/check-release.sh` in CI on every pushed tag.

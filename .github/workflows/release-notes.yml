@@ -1,0 +1,16 @@
+name: release notes
+# Every pushed tag must carry its notes. If this fails, the tag came out around
+# scripts/tag-release.sh; publish with:  scripts/release_notes.py <tag> --publish
+on:
+  push:
+    tags: ['v*', '*-v*']
+permissions:
+  contents: read
+jobs:
+  has-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: scripts/check-release.sh "$GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: ${{ github.token }}
