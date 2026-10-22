@@ -66,7 +66,8 @@ Escape hatch for a release cut, which commits on protected branches by design:
 variable means a shared hook does not recognise the release cut of the project
 it runs in.
 
-Project path exclusions go in `.claude/hook-exclusions`, one glob per line.
+Project path exclusions go in `.claude/hook-exclusions`, one literal path fragment per line
+(matched as a substring of the path, not a glob: `src/`, not `src/**`).
 They are **not** hard-coded: the two projects these hooks came from each had
 their own list baked in, which would silently exclude nothing elsewhere.
 

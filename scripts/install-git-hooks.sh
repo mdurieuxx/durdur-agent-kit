@@ -45,7 +45,7 @@ poser pre-commit enforce-feature-branch.sh english-only.sh no-assistant-in-code.
 poser commit-msg no-assistant-attribution.sh tdd-test-parity.sh spec-before-code.sh
 
 echo
-echo "Project exclusions go in .claude/hook-exclusions, one glob per line."
+echo "Project exclusions go in .claude/hook-exclusions, one literal path fragment per line."
 echo "Escape hatch for a release cut:  RELEASE_CUT=1 git commit ..."
 echo
 echo "--- proving they fire ---"
