@@ -279,6 +279,18 @@ tokens, once**:
 tokens every turn to tell you about tokens is self-defeating. Once per session is
 enough to notice a trend; the command is there for detail.
 
+### Cost of a message before every clear, on by default
+
+Plugin option `cost_before_clear` (set when the plugin is enabled, default on):
+the SessionStart hook adds one standing rule, so every clear proposal and the
+first reply after a clear start with the cost of a message (context re-read each
+turn, session total, window fill). Turn it off and the line is not injected.
+
+Why a rule and not only the `checkpoint` skill: witnessed, a clear proposed
+without the figures although the owner had asked for them every time. A skill
+is read when it is invoked; a standing rule is in the context at the moment the
+proposal is written.
+
 ### Four figures, never one total
 
 They are not priced the same: a cache read costs a fraction of a fresh input

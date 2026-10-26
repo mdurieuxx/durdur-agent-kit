@@ -6,5 +6,13 @@
   },
   "repository": "https://github.com/mdurieuxx/durdur-agent-kit",
   "version": "0.3.0",
-  "license": "SEE LICENSE IN LICENSE"
+  "license": "SEE LICENSE IN LICENSE",
+  "userConfig": {
+    "cost_before_clear": {
+      "type": "boolean",
+      "title": "Cost before a clear",
+      "description": "Every clear proposal, and the first reply after a clear, gives the cost of a message: tokens re-read each turn (context size), the session total, and the fill of the window. Off removes that standing rule from the session context.",
+      "default": true
+    }
+  }
 }

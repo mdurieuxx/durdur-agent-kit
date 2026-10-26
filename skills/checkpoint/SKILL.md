@@ -97,6 +97,11 @@ ends up asking "do you want a clear?" with the window already past 80%.
    - **context quality**: the token-optimizer score (e.g. `B (78/100)`), or
      "not measured" when it is unavailable. Never invent one.
 
+   These figures come first, in every proposal, never on request only. The
+   plugin option `cost_before_clear` (default on) also states it as a standing
+   rule. Witnessed: a proposal without them, after the owner had asked for
+   them each time.
+
    One line is enough:
    `Context: 142k tokens (71%), quality B (78/100); one message costs ~142k tokens now vs ~64k after the clear.`
 4. Always give, with the proposal, **the prompt to paste after the clear**, in one

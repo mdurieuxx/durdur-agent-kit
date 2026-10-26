@@ -17,4 +17,9 @@ set -uo pipefail
 # Seed the ownership list once, from what GitHub says. Quiet, and never overwrites.
 [ -e "$HOME/.claude/owned-owners" ] || "$(dirname "$0")/../scripts/seed-owned-owners.sh" >/dev/null 2>&1 || true
 cat "$(dirname "$0")/session-rules.txt" 2>/dev/null || true
+# Plugin option cost_before_clear (default on). Witnessed: a clear proposed without the
+# cost of a message, after the owner had asked for it every time; the skill alone was not enough.
+if [ "${CLAUDE_PLUGIN_OPTION_COST_BEFORE_CLEAR:-true}" != "false" ]; then
+  echo "3. Every clear proposal, and the first reply after a clear, starts with the cost of a message: context size (tokens re-read each turn), session total, window fill. A proposal or resume without it is incomplete."
+fi
 exit 0
